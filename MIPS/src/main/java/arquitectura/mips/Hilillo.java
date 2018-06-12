@@ -6,14 +6,13 @@ import java.util.ArrayList;
 /**
  * Created by alexiaborchgrevink on 6/11/18.
  */
-public class Hilillo implements Runnable {
+public class Hilillo {
+    //hilo ejecuta el hillillo
 
     private Contexto contexto;
+    private int direccionInstruccion;
 
-    private ArrayList<Integer> instrucciones;
-
-    @Override
-    public void run() {
+    public void ejecutar() {
 
     }
 
@@ -25,11 +24,11 @@ public class Hilillo implements Runnable {
         this.contexto = contexto;
     }
 
-    public ArrayList<Integer> getInstrucciones() {
-        return instrucciones;
+    public int getDireccionInstruccion() {
+        return direccionInstruccion;
     }
 
-    public void setInstrucciones(ArrayList<Integer> instrucciones) {
-        this.instrucciones = instrucciones;
+    public void setDireccionInstruccion(int direccionInstruccion) {
+        this.direccionInstruccion = direccionInstruccion;
     }
 }

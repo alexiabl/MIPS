@@ -1,4 +1,4 @@
-package arquitectura.mips;
+package arquitectura.mips.Cache;
 
 import java.util.Stack;
 
@@ -6,6 +6,8 @@ import java.util.Stack;
  * Created by alexiaborchgrevink on 6/4/18.
  */
 public class CacheInstrucciones {
+
+//cuando hay fallo de CI?
 
     private Stack instrucciones;
     private int tamano;
