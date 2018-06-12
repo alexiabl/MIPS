@@ -1,5 +1,7 @@
 package arquitectura.mips.Memoria;
 
+import arquitectura.mips.Bloque.BloqueInstrucciones;
+
 import java.util.ArrayList;
 
 /**
@@ -7,17 +9,18 @@ import java.util.ArrayList;
  */
 public class MemoriaInstrucciones {
 
-    private ArrayList<Integer> instrucciones;
+    private ArrayList<BloqueInstrucciones> instrucciones;
+
 
     public MemoriaInstrucciones() {
         instrucciones = new ArrayList<>();
     }
 
-    public ArrayList<Integer> getInstrucciones() {
+    public ArrayList<BloqueInstrucciones> getInstrucciones() {
         return instrucciones;
     }
 
-    public void setInstrucciones(ArrayList<Integer> instrucciones) {
+    public void setInstrucciones(ArrayList<BloqueInstrucciones> instrucciones) {
         this.instrucciones = instrucciones;
     }
 }

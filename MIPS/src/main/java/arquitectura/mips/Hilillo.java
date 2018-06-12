@@ -11,6 +11,15 @@ public class Hilillo {
 
     private Contexto contexto;
     private int direccionInstruccion;
+    private int quantum;
+
+    public Hilillo(int quantum) {
+        this.quantum = quantum;
+    }
+
+    public Hilillo() {
+
+    }
 
     public void ejecutar() {
 

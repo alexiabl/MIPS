@@ -11,18 +11,15 @@ import java.util.ArrayList;
 public class MemoriaPrincipal {
 
     private ArrayList<BloqueDatos> datos;
-    private ArrayList<BloqueInstrucciones> instrucciones;
     private int tamano;
 
     public MemoriaPrincipal(int tamano) {
         this.datos = new ArrayList<>();
-        this.instrucciones = new ArrayList<>();
         this.tamano = tamano;
     }
 
     public MemoriaPrincipal() {
         this.datos = new ArrayList<>();
-        this.instrucciones = new ArrayList<>();
     }
 
 
