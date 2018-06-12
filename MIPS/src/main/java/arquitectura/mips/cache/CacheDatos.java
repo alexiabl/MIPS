@@ -1,6 +1,4 @@
-package arquitectura.mips.Cache;
-
-import arquitectura.mips.Cache.BloqueCache;
+package arquitectura.mips.cache;
 
 import java.util.ArrayList;
 

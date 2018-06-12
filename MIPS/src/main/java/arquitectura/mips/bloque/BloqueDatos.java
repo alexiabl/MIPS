@@ -1,6 +1,4 @@
-package arquitectura.mips.Bloque;
-
-import arquitectura.mips.Bloque.Bloque;
+package arquitectura.mips.bloque;
 
 import java.util.ArrayList;
 

@@ -10,7 +10,6 @@ public class Hilillo {
     //hilo ejecuta el hillillo
 
     private Contexto contexto;
-    private int direccionInstruccion;
     private int quantum;
 
     public Hilillo(int quantum) {
@@ -33,11 +32,4 @@ public class Hilillo {
         this.contexto = contexto;
     }
 
-    public int getDireccionInstruccion() {
-        return direccionInstruccion;
-    }
-
-    public void setDireccionInstruccion(int direccionInstruccion) {
-        this.direccionInstruccion = direccionInstruccion;
-    }
 }

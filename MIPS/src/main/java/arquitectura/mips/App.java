@@ -1,8 +1,8 @@
 package arquitectura.mips;
 
-import arquitectura.mips.Cache.CacheDatos;
-import arquitectura.mips.Cache.CacheInstrucciones;
-import arquitectura.mips.Memoria.MemoriaPrincipal;
+import arquitectura.mips.cache.CacheDatos;
+import arquitectura.mips.cache.CacheInstrucciones;
+import arquitectura.mips.memoria.MemoriaPrincipal;
 
 /**
  * Hello world!

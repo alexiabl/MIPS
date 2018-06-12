@@ -1,6 +1,6 @@
-package arquitectura.mips.Memoria;
+package arquitectura.mips.memoria;
 
-import arquitectura.mips.Bloque.BloqueInstrucciones;
+import arquitectura.mips.bloque.BloqueInstrucciones;
 
 import java.util.ArrayList;
 

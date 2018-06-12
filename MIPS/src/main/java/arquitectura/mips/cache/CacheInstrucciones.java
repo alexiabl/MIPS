@@ -1,4 +1,4 @@
-package arquitectura.mips.Cache;
+package arquitectura.mips.cache;
 
 import java.util.Stack;
 

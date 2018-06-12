@@ -1,4 +1,4 @@
-package arquitectura.mips.Bloque;
+package arquitectura.mips.bloque;
 
 /**
  * Created by alexiaborchgrevink on 6/11/18.

@@ -1,6 +1,6 @@
 package arquitectura.mips;
 
-import arquitectura.mips.Bloque.Bloque;
+import arquitectura.mips.bloque.Bloque;
 
 import java.util.UUID;
 
