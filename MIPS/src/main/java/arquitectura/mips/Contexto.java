@@ -8,8 +8,10 @@ import java.util.UUID;
  */
 public class Contexto {
 
+    //cola de contextos
     private int PC;
     private ArrayList<Integer> registros;
+    //todos los registros comienzan en 0
     private UUID id;
     //start time
     //end time

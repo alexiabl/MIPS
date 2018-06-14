@@ -1,4 +1,4 @@
-package arquitectura.mips;
+package arquitectura.mips.cache;
 
 import java.util.ArrayList;
 

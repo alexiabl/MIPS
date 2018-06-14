@@ -1,4 +1,6 @@
-package arquitectura.mips;
+package arquitectura.mips.memoria;
+
+import arquitectura.mips.bloque.BloqueDatos;
 
 import java.util.ArrayList;
 
@@ -8,19 +10,15 @@ import java.util.ArrayList;
 public class MemoriaPrincipal {
 
     private ArrayList<BloqueDatos> datos;
-    private ArrayList<BloqueInstrucciones> instrucciones;
-    private int numBloque;
     private int tamano;
 
     public MemoriaPrincipal(int tamano) {
         this.datos = new ArrayList<>();
-        this.instrucciones = new ArrayList<>();
         this.tamano = tamano;
     }
 
     public MemoriaPrincipal() {
         this.datos = new ArrayList<>();
-        this.instrucciones = new ArrayList<>();
     }
 
 

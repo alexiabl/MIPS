@@ -1,11 +1,11 @@
-package arquitectura.mips;
+package arquitectura.mips.bloque;
 
 import java.util.Stack;
 
 /**
  * Created by alexiaborchgrevink on 6/4/18.
  */
-public class BloqueInstrucciones {
+public class BloqueInstrucciones extends Bloque {
 
     private Stack instrucciones;
 

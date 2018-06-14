@@ -1,5 +1,8 @@
 package arquitectura.mips;
 
+import arquitectura.mips.cache.CacheDatos;
+import arquitectura.mips.cache.CacheInstrucciones;
+
 /**
  * Created by alexiaborchgrevink on 6/4/18.
  */

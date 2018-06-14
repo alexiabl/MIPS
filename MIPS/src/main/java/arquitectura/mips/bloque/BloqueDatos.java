@@ -1,11 +1,11 @@
-package arquitectura.mips;
+package arquitectura.mips.bloque;
 
 import java.util.ArrayList;
 
 /**
  * Created by alexiaborchgrevink on 6/4/18.
  */
-public class BloqueDatos {
+public class BloqueDatos extends Bloque {
 
     private ArrayList<Integer> palabras;
 
@@ -20,4 +20,5 @@ public class BloqueDatos {
     public void setPalabras(ArrayList<Integer> palabras) {
         this.palabras = palabras;
     }
+
 }
