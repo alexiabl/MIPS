@@ -2,7 +2,12 @@ package arquitectura.mips;
 
 import arquitectura.mips.cache.CacheDatos;
 import arquitectura.mips.cache.CacheInstrucciones;
+import arquitectura.mips.memoria.MemoriaInstrucciones;
 import arquitectura.mips.memoria.MemoriaPrincipal;
+import arquitectura.mips.util.Util;
+
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Hello world!
@@ -19,6 +24,12 @@ public class App
         //unica cola de contextos para los dos nucleos
 
         MemoriaPrincipal memoriaPrincipal = new MemoriaPrincipal(8);
+
+        Util util = new Util();
+
+        util.leerArchivos();
+        MemoriaInstrucciones memoriaInstrucciones = util.getMemoriaInstrucciones();
+
 
         CacheDatos cacheDatos0 = nucleo0.getCacheDatos();
         CacheInstrucciones cacheInstrucciones0 = nucleo0.getCacheInstrucciones();
@@ -42,5 +53,6 @@ public class App
         //cuales archivos se ejecutan en cual nucleo
         //como crear los hilillos, random?
         //estructura para estados de los hilillos y el bloque si esta bloqueado o reservado
+        //cada vez q hay que cambiar de ciclo -> doble barrera?
     }
 }

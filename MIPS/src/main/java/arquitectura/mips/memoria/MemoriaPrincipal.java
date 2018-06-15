@@ -13,12 +13,12 @@ public class MemoriaPrincipal {
     private int tamano;
 
     public MemoriaPrincipal(int tamano) {
-        this.datos = new ArrayList<>();
+        this.datos = new ArrayList<BloqueDatos>();
         this.tamano = tamano;
     }
 
     public MemoriaPrincipal() {
-        this.datos = new ArrayList<>();
+        this.datos = new ArrayList<BloqueDatos>();
     }
 
 
