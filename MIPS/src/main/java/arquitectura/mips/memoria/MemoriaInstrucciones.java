@@ -13,7 +13,7 @@ public class MemoriaInstrucciones {
 
 
     public MemoriaInstrucciones() {
-        instrucciones = new ArrayList<>();
+        instrucciones = new ArrayList<BloqueInstrucciones>();
     }
 
     public ArrayList<BloqueInstrucciones> getInstrucciones() {
@@ -22,5 +22,9 @@ public class MemoriaInstrucciones {
 
     public void setInstrucciones(ArrayList<BloqueInstrucciones> instrucciones) {
         this.instrucciones = instrucciones;
+    }
+
+    public void addBloqueInstruccion(BloqueInstrucciones bloqueInstrucciones) {
+        this.instrucciones.add(bloqueInstrucciones);
     }
 }

@@ -17,7 +17,7 @@ public class Contexto {
     //end time
 
     public Contexto() {
-        this.registros = new ArrayList<>(32);
+        this.registros = new ArrayList<Integer>(32);
     }
 
     public int getPC() {

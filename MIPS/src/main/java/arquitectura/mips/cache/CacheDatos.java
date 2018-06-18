@@ -11,12 +11,12 @@ public class CacheDatos {
     private int tamano;
 
     public CacheDatos(int tamano) {
-        this.cache = new ArrayList<>();
+        this.cache = new ArrayList<BloqueCache>();
         this.tamano = tamano;
     }
 
     public CacheDatos() {
-        this.cache = new ArrayList<>();
+        this.cache = new ArrayList<BloqueCache>();
     }
 
     public ArrayList<BloqueCache> getCache() {
