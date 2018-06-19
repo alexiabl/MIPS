@@ -30,7 +30,7 @@ public class Hilo { //corre el hilillo
     public void DADDI () {
         int resultado = registros.get(IR.get(1)) + IR.get(3);
         registros.set(2, resultado);
-        //System.out.println(registros.get(2));
+
     }
 
 
