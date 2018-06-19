@@ -10,7 +10,7 @@ public class BloqueDatos extends Bloque {
     private ArrayList<Integer> palabras;
 
     public BloqueDatos() {
-        this.palabras = new ArrayList<>();
+        this.palabras = new ArrayList<Integer>();
     }
 
     public ArrayList<Integer> getPalabras() {

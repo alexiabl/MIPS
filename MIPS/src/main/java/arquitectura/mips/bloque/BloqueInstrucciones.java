@@ -1,5 +1,6 @@
 package arquitectura.mips.bloque;
 
+import java.util.ArrayList;
 import java.util.Stack;
 
 /**
@@ -7,17 +8,17 @@ import java.util.Stack;
  */
 public class BloqueInstrucciones extends Bloque {
 
-    private Stack instrucciones;
+    private ArrayList<Integer> instrucciones;
 
     public BloqueInstrucciones() {
-        this.instrucciones = new Stack();
+        this.instrucciones = new ArrayList<Integer>();
     }
 
-    public Stack getInstrucciones() {
+    public ArrayList<Integer> getInstrucciones() {
         return instrucciones;
     }
 
-    public void setInstrucciones(Stack instrucciones) {
+    public void setInstrucciones(ArrayList instrucciones) {
         this.instrucciones = instrucciones;
     }
 }
