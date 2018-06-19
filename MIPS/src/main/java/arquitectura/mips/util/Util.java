@@ -1,5 +1,6 @@
 package arquitectura.mips.util;
 
+import arquitectura.mips.Contexto;
 import arquitectura.mips.Hilillo;
 import arquitectura.mips.bloque.BloqueInstrucciones;
 import arquitectura.mips.memoria.MemoriaInstrucciones;
@@ -17,35 +18,24 @@ import java.util.Queue;
 public class Util {
 
     private MemoriaInstrucciones memoriaInstrucciones;
-    private MemoriaPrincipal memoriaPrincipal;
     private List<String> archivos;
-    private Queue<Hilillo> hilillos;
+    private Queue<Contexto> colaDeContextos;
 
 
-    public Util() {
+    public Util() throws IOException {
         this.memoriaInstrucciones = new MemoriaInstrucciones();
         this.archivos = new LinkedList<String>();
-        File file1 = new File("1.txt");
-        String path1 = file1.getAbsolutePath();
-
-        File file2 = new File("2.txt");
-        String path2 = file2.getAbsolutePath();
-
-        File file3 = new File("3.txt");
-        String path3 = file3.getAbsolutePath();
-
-        File file4 = new File("4.txt");
-        String path4 = file4.getAbsolutePath();
-
-        File file5 = new File("5.txt");
-        String path5 = file5.getAbsolutePath();
-
-        this.archivos.add(path1);
-        this.archivos.add(path2);
-        this.archivos.add(path3);
-        this.archivos.add(path4);
-        this.archivos.add(path5);
-        this.hilillos = new LinkedList<Hilillo>();
+        String file1 = "/Users/alexiaborchgrevink/Desktop/Arquitectura/Proyecto-MIPS/MIPS/MIPS/src/main/java/arquitectura/mips/util/1.txt";
+        String file2 = "/Users/alexiaborchgrevink/Desktop/Arquitectura/Proyecto-MIPS/MIPS/MIPS/src/main/java/arquitectura/mips/util/2.txt";
+        String file3 = "/Users/alexiaborchgrevink/Desktop/Arquitectura/Proyecto-MIPS/MIPS/MIPS/src/main/java/arquitectura/mips/util/3.txt";
+        String file4 = "/Users/alexiaborchgrevink/Desktop/Arquitectura/Proyecto-MIPS/MIPS/MIPS/src/main/java/arquitectura/mips/util/4.txt";
+        String file5 = "/Users/alexiaborchgrevink/Desktop/Arquitectura/Proyecto-MIPS/MIPS/MIPS/src/main/java/arquitectura/mips/util/2.txt";
+        this.archivos.add(file1);
+        this.archivos.add(file2);
+        this.archivos.add(file3);
+        this.archivos.add(file4);
+        this.archivos.add(file5);
+        this.colaDeContextos = new LinkedList<Contexto>();
     }
 
     public void leerArchivos() { //insertar en memoria principal
@@ -59,7 +49,7 @@ public class Util {
                 StringBuffer stringBuffer = new StringBuffer();
                 String line;
                 int cont = contadorBloque;
-                Hilillo hilillo = new Hilillo(posicionActual);
+                Contexto contexto = new Contexto(posicionActual);
                 while ((line = bufferedReader.readLine()) != null) {
                     stringBuffer.append(line);
                     String[] split = line.split(" ");
@@ -77,7 +67,7 @@ public class Util {
                     }
                     posicionActual++;
                 }
-                this.agregarHillillo(hilillo);
+                this.agregarAColaDeContextos(contexto);
                 fileReader.close();
                 System.out.println(stringBuffer.toString());
             } catch (IOException e) {
@@ -87,16 +77,16 @@ public class Util {
         }
     }
 
-    public void agregarHillillo(Hilillo h) {
-        this.hilillos.add(h);
+    public void agregarAColaDeContextos(Contexto c) {
+        this.colaDeContextos.add(c);
     }
 
     public MemoriaInstrucciones getMemoriaInstrucciones() {
         return this.memoriaInstrucciones;
     }
 
-    public Queue<Hilillo> getHilillos() {
-        return this.hilillos;
+    public Queue<Contexto> getColaDeContextos() {
+        return this.colaDeContextos;
     }
 
 
