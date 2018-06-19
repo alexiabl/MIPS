@@ -12,12 +12,13 @@ public class Hilillo {
     private Contexto contexto;
     private int quantum;
 
-    public Hilillo(int quantum) {
+    public Hilillo(int quantum, int pc) {
         this.quantum = quantum;
+        this.contexto = new Contexto(pc);
     }
 
-    public Hilillo() {
-
+    public Hilillo(int pc) {
+        this.contexto = new Contexto(pc);
     }
 
     public void ejecutar() {

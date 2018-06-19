@@ -1,5 +1,8 @@
 package arquitectura.mips.cache;
 
+import arquitectura.mips.bloque.BloqueInstrucciones;
+
+import java.util.ArrayList;
 import java.util.Stack;
 
 /**
@@ -7,25 +10,27 @@ import java.util.Stack;
  */
 public class CacheInstrucciones {
 
-//cuando hay fallo de CI?
-
-    private Stack instrucciones;
+    private ArrayList<BloqueInstrucciones> instrucciones;
     private int tamano;
 
     public CacheInstrucciones(int tamano) {
-        this.instrucciones = new Stack();
+        this.instrucciones = new ArrayList<BloqueInstrucciones>();
         this.tamano = tamano;
+        for (int i = 0; i < this.tamano; i++) {
+            BloqueInstrucciones bloque = new BloqueInstrucciones();
+            this.instrucciones.add(bloque);
+        }
     }
 
     public CacheInstrucciones() {
-        this.instrucciones = new Stack();
+        this.instrucciones = new ArrayList<BloqueInstrucciones>();
     }
 
-    public Stack getInstrucciones() {
+    public ArrayList<BloqueInstrucciones> getInstrucciones() {
         return instrucciones;
     }
 
-    public void setInstrucciones(Stack instrucciones) {
+    public void setInstrucciones(ArrayList<BloqueInstrucciones> instrucciones) {
         this.instrucciones = instrucciones;
     }
 

@@ -13,6 +13,10 @@ public class CacheDatos {
     public CacheDatos(int tamano) {
         this.cache = new ArrayList<BloqueCache>();
         this.tamano = tamano;
+        for (int i = 0; i < this.tamano; i++) {
+            BloqueCache bloque = new BloqueCache();
+            this.cache.add(bloque);
+        }
     }
 
     public CacheDatos() {
