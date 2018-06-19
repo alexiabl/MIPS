@@ -8,7 +8,7 @@ public class Bus {
     private boolean bloqueado;
 
     public Bus() {
-
+        this.bloqueado = false;
     }
 
     public boolean isBloqueado() {

@@ -16,8 +16,10 @@ public class Contexto {
     //start time
     //end time
 
-    public Contexto() {
+    public Contexto(int pc) {
+        this.id = UUID.randomUUID();
         this.registros = new ArrayList<Integer>(32);
+        this.PC = pc;
     }
 
     public int getPC() {
@@ -29,7 +31,7 @@ public class Contexto {
     }
 
     public ArrayList<Integer> getRegistros() {
-        return registros;
+        return this.registros;
     }
 
     public void setRegistros(ArrayList<Integer> registros) {
@@ -37,10 +39,6 @@ public class Contexto {
     }
 
     public UUID getId() {
-        return id;
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
+        return this.id;
     }
 }

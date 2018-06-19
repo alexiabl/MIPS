@@ -12,6 +12,7 @@ public class BloqueCache {
     private ArrayList<Integer> palabras;
 
     public BloqueCache() {
+        this.palabras = new ArrayList<Integer>();
 
     }
 

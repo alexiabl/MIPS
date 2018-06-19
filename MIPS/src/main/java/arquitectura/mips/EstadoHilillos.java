@@ -13,6 +13,12 @@ public class EstadoHilillos {
     private Estado estado;
     private Bloque bloque;
 
+    public EstadoHilillos(UUID id, Estado estado, Bloque b) {
+        this.idHilillo = id;
+        this.estado = estado;
+        this.bloque = b;
+    }
+
     public EstadoHilillos() {
 
     }
