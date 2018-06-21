@@ -7,7 +7,6 @@ import java.util.ArrayList;
  * Created by alexiaborchgrevink on 6/11/18.
  */
 public class Hilillo {
-    //hilo ejecuta el hillillo
 
     private Contexto contexto;
     private int quantum;

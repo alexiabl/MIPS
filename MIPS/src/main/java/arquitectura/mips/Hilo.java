@@ -17,9 +17,6 @@ public class Hilo { //corre el hilillo
 
     public Hilo(Hilillo hilillo) {
         this.hilillo = hilillo;
-        for (int i = 0; i < registros.size(); i++) {
-            this.registros.add(0);//cambiar a 0
-        }
     }
 
     public void ejecutar(ArrayList<Integer> instruccion) { //despues de cada instruccion se le quita quantum

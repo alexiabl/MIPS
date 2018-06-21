@@ -33,6 +33,9 @@ public class App
         MemoriaInstrucciones memoriaInstrucciones = util.getMemoriaInstrucciones();
         Queue<Contexto> colaDeContextos = util.getColaDeContextos();
 
+        Hilillo hilillo1 = new Hilillo(40, 0);
+        //Hilillo hilillo2 = new Hilillo(40,)
+
 
     }
 

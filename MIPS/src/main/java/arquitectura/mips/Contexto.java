@@ -24,7 +24,6 @@ public class Contexto {
             Integer valorRegistro = new Integer(0);
             this.registros.add(valorRegistro);
         }
-
         this.PC = pc;
     }
 
