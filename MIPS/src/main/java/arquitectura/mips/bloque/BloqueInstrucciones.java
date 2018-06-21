@@ -8,7 +8,7 @@ import java.util.Stack;
  */
 public class BloqueInstrucciones extends Bloque {
 
-    private ArrayList<Integer> instrucciones;
+    private ArrayList instrucciones;
 
     public BloqueInstrucciones() {
         this.instrucciones = new ArrayList<Integer>();

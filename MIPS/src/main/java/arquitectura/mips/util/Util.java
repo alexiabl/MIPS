@@ -50,6 +50,7 @@ public class Util {
                 String line;
                 int cont = contadorBloque;
                 Contexto contexto = new Contexto(posicionActual);
+
                 while ((line = bufferedReader.readLine()) != null) {
                     stringBuffer.append(line);
                     String[] split = line.split(" ");
