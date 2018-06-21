@@ -33,4 +33,15 @@ public class Hilillo {
         this.contexto = contexto;
     }
 
+    public int getQuantum() {
+        return quantum;
+    }
+
+    public void setQuantum(int quantum) {
+        this.quantum = quantum;
+    }
+
+    public void quitarQuantum() {
+        this.quantum--;
+    }
 }

@@ -13,50 +13,64 @@ public class Hilo { //corre el hilillo
     private ArrayList<Integer> IR;
     private ArrayList<Integer> registros = new ArrayList<Integer>(32);
     private int PC;
+    private Hilillo hilillo;
 
-    public Hilo() {
+    public Hilo(Hilillo hilillo) {
+        this.hilillo = hilillo;
         for (int i = 0; i < registros.size(); i++) {
             this.registros.add(0);//cambiar a 0
         }
     }
 
-    public void ejecutar(ArrayList<Integer> instruccion) {
+    public void ejecutar(ArrayList<Integer> instruccion) { //despues de cada instruccion se le quita quantum
         switch (instruccion.get(0)) {
             case 8: //DADDI
                 DADDI();
+                this.hilillo.quitarQuantum();
                 break;
             case 32:
                 DADD();
+                this.hilillo.quitarQuantum();
                 break;
             case 34:
                 DSUB();
+                this.hilillo.quitarQuantum();
                 break;
             case 12:
                 DMUL();
+                this.hilillo.quitarQuantum();
                 break;
             case 14:
                 DDIV();
+                this.hilillo.quitarQuantum();
                 break;
             case 4:
                 BEQZ();
+                this.hilillo.quitarQuantum();
                 break;
             case 5:
                 BNEZ();
+                this.hilillo.quitarQuantum();
                 break;
             case 3:
                 JAL();
+                this.hilillo.quitarQuantum();
                 break;
             case 2:
                 JR();
+                this.hilillo.quitarQuantum();
                 break;
             case 35:
                 //LW
+                this.hilillo.quitarQuantum();
                 break;
             case 43:
                 //SW
+                this.hilillo.quitarQuantum();
                 break;
             case 63:
                 FIN();
+                this.hilillo.quitarQuantum();
                 break;
         }
     }

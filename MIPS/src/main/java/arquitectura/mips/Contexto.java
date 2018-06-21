@@ -18,8 +18,8 @@ public class Contexto {
 
     public Contexto(int pc) {
         this.id = UUID.randomUUID();
-
         this.registros = new ArrayList<Integer>(32);
+
         for (int i = 0; i < this.registros.size(); i++) {
             Integer valorRegistro = new Integer(0);
             this.registros.add(valorRegistro);
