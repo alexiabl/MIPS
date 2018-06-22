@@ -78,10 +78,6 @@ public class Util {
         }
     }
 
-    public int getTamanoArchivo() {
-        return 0;
-    }
-
     public void agregarAColaDeContextos(Contexto c) {
         this.colaDeContextos.add(c);
     }

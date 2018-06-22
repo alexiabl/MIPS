@@ -11,11 +11,17 @@ public class Nucleo {
     private CacheDatos cacheDatos;
     private CacheInstrucciones cacheInstrucciones;
     private boolean dobleHilo;
+    private Hilo hilo1;
+    private Hilo hilo2;
 
     public Nucleo(boolean dobleHilo, int tamano) {
         this.cacheDatos = new CacheDatos(tamano);
         this.cacheInstrucciones = new CacheInstrucciones(tamano);
         this.dobleHilo = dobleHilo;
+        this.hilo1 = new Hilo();
+        if (dobleHilo) {
+            this.hilo2 = new Hilo();
+        }
     }
 
     public CacheDatos getCacheDatos() {
@@ -40,5 +46,21 @@ public class Nucleo {
 
     public void setDobleHilo(boolean dobleHilo) {
         this.dobleHilo = dobleHilo;
+    }
+
+    public Hilo getHilo1() {
+        return hilo1;
+    }
+
+    public void setHilo1(Hilo hilo1) {
+        this.hilo1 = hilo1;
+    }
+
+    public Hilo getHilo2() {
+        return hilo2;
+    }
+
+    public void setHilo2(Hilo hilo2) {
+        this.hilo2 = hilo2;
     }
 }

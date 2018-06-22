@@ -19,6 +19,10 @@ public class Hilo { //corre el hilillo
         this.hilillo = hilillo;
     }
 
+    public Hilo() {
+
+    }
+
     public void ejecutar(ArrayList<Integer> instruccion) { //despues de cada instruccion se le quita quantum
         switch (instruccion.get(0)) {
             case 8: //DADDI

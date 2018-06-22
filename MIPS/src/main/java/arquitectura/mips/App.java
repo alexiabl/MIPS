@@ -33,9 +33,12 @@ public class App
         MemoriaInstrucciones memoriaInstrucciones = util.getMemoriaInstrucciones();
         Queue<Contexto> colaDeContextos = util.getColaDeContextos();
 
-        Hilillo hilillo1 = new Hilillo(40, 0);
-        //Hilillo hilillo2 = new Hilillo(40,)
+        //asignar hilillo a hilo de manera random
+        asignarHilillo();
 
+    }
+
+    public static void asignarHilillo() { //asignar hilillo a hilo de nucleo
 
     }
 
