@@ -1,36 +1,35 @@
 package arquitectura.mips.cache;
 
-import arquitectura.mips.bloque.BloqueInstrucciones;
+import arquitectura.mips.block.BlockInstructions;
 
 import java.util.ArrayList;
-import java.util.Stack;
 
 /**
  * Created by alexiaborchgrevink on 6/4/18.
  */
 public class CacheInstrucciones {
 
-    private ArrayList<BloqueInstrucciones> instrucciones;
+    private ArrayList<BlockInstructions> instrucciones;
     private int tamano;
 
     public CacheInstrucciones(int tamano) {
-        this.instrucciones = new ArrayList<BloqueInstrucciones>();
+        this.instrucciones = new ArrayList<BlockInstructions>();
         this.tamano = tamano;
         for (int i = 0; i < this.tamano; i++) {
-            BloqueInstrucciones bloque = new BloqueInstrucciones();
+            BlockInstructions bloque = new BlockInstructions();
             this.instrucciones.add(bloque);
         }
     }
 
     public CacheInstrucciones() {
-        this.instrucciones = new ArrayList<BloqueInstrucciones>();
+        this.instrucciones = new ArrayList<BlockInstructions>();
     }
 
-    public ArrayList<BloqueInstrucciones> getInstrucciones() {
+    public ArrayList<BlockInstructions> getInstrucciones() {
         return instrucciones;
     }
 
-    public void setInstrucciones(ArrayList<BloqueInstrucciones> instrucciones) {
+    public void setInstrucciones(ArrayList<BlockInstructions> instrucciones) {
         this.instrucciones = instrucciones;
     }
 

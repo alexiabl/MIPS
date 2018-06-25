@@ -6,25 +6,25 @@ import java.util.Collections;
 /**
  * Created by alexiaborchgrevink on 6/11/18.
  */
-public class Hilo { //corre el hilillo
+public class Thread { //corre el hilillo
 
 //tiempo de ejecucion de cada hilillo
 
     private ArrayList<Integer> IR;
-    private ArrayList<Integer> registros = new ArrayList<Integer>(32);
+    private ArrayList<Integer> registers = new ArrayList<Integer>(32);
     private int PC;
     private Hilillo hilillo;
 
-    public Hilo(Hilillo hilillo) {
+    public Thread(Hilillo hilillo) {
         this.hilillo = hilillo;
     }
 
-    public Hilo() {
+    public Thread() {
 
     }
 
-    public void ejecutar(ArrayList<Integer> instruccion) { //despues de cada instruccion se le quita quantum
-        switch (instruccion.get(0)) {
+    public void execute(ArrayList<Integer> instruction) { //despues de cada instruccion se le quita quantum
+        switch (instruction.get(0)) {
             case 8: //DADDI
                 DADDI();
                 this.hilillo.quitarQuantum();
@@ -78,54 +78,54 @@ public class Hilo { //corre el hilillo
 
 
     public void DADDI() {
-        int resultado = this.registros.get(IR.get(1)) + IR.get(3);
-        this.registros.set(2, resultado);
+        int resultado = this.registers.get(IR.get(1)) + IR.get(3);
+        this.registers.set(2, resultado);
     }
 
     public void DADD() {
-        int resultado = this.registros.get(IR.get(1)) + this.registros.get(IR.get(2));
-        this.registros.set(3, resultado);
-        //System.out.println(registros.get(3));
+        int resultado = this.registers.get(IR.get(1)) + this.registers.get(IR.get(2));
+        this.registers.set(3, resultado);
+        //System.out.println(registers.get(3));
     }
 
     public void DSUB() {
-        int resultado = registros.get(IR.get(1)) - registros.get(IR.get(2));
-        registros.set(3, resultado);
+        int resultado = registers.get(IR.get(1)) - registers.get(IR.get(2));
+        registers.set(3, resultado);
     }
 
     public void DMUL() {
-        int resultado = registros.get(IR.get(1)) * registros.get(IR.get(2));
-        registros.set(3, resultado);
+        int resultado = registers.get(IR.get(1)) * registers.get(IR.get(2));
+        registers.set(3, resultado);
     }
 
     public void DDIV() {
-        if (registros.get(IR.get(2)) != 0) {
-            int resultado = registros.get(IR.get(1)) / registros.get(IR.get(2));
-            registros.set(3, resultado);
+        if (registers.get(IR.get(2)) != 0) {
+            int resultado = registers.get(IR.get(1)) / registers.get(IR.get(2));
+            registers.set(3, resultado);
         } else {
             System.out.println("Advertencia! Está dividiendo entre 0.");
         }
     }
 
     public void BEQZ() {
-        if (registros.get(IR.get(1)) == 0) {
+        if (registers.get(IR.get(1)) == 0) {
             PC = PC + 4 * IR.get(3);
         }
     }
 
     public void BNEZ() {
-        if (registros.get(IR.get(1)) != 0) {
+        if (registers.get(IR.get(1)) != 0) {
             PC = PC + 4 * IR.get(3);
         }
     }
 
     public void JAL() {
-        registros.set(31, PC);
+        registers.set(31, PC);
         PC = PC + IR.get(3);
     }
 
     public void JR() {
-        PC = registros.get(IR.get(1));
+        PC = registers.get(IR.get(1));
     }
 
     public void FIN() {
@@ -142,6 +142,14 @@ public class Hilo { //corre el hilillo
 
     public void setPC(int PC) {
         this.PC = PC;
+    }
+
+    public void setHilillo(Hilillo hilillo) {
+        this.hilillo = hilillo;
+    }
+
+    public Hilillo getHilillo() {
+        return this.hilillo;
     }
 
 

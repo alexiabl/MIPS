@@ -1,9 +1,9 @@
-package arquitectura.mips.bloque;
+package arquitectura.mips.block;
 
 /**
  * Created by alexiaborchgrevink on 6/11/18.
  */
-public abstract class Bloque {
+public abstract class Block {
 
     private int numBloque;
 

@@ -6,21 +6,21 @@ import arquitectura.mips.cache.CacheInstrucciones;
 /**
  * Created by alexiaborchgrevink on 6/4/18.
  */
-public class Nucleo {
+public class Core {
 
     private CacheDatos cacheDatos;
     private CacheInstrucciones cacheInstrucciones;
     private boolean dobleHilo;
-    private Hilo hilo1;
-    private Hilo hilo2;
+    private Thread thread1;
+    private Thread thread2;
 
-    public Nucleo(boolean dobleHilo, int tamano) {
+    public Core(boolean dobleHilo, int tamano) {
         this.cacheDatos = new CacheDatos(tamano);
         this.cacheInstrucciones = new CacheInstrucciones(tamano);
         this.dobleHilo = dobleHilo;
-        this.hilo1 = new Hilo();
+        this.thread1 = new Thread();
         if (dobleHilo) {
-            this.hilo2 = new Hilo();
+            this.thread2 = new Thread();
         }
     }
 
@@ -48,19 +48,19 @@ public class Nucleo {
         this.dobleHilo = dobleHilo;
     }
 
-    public Hilo getHilo1() {
-        return hilo1;
+    public Thread getThread1() {
+        return thread1;
     }
 
-    public void setHilo1(Hilo hilo1) {
-        this.hilo1 = hilo1;
+    public void setThread1(Thread thread1) {
+        this.thread1 = thread1;
     }
 
-    public Hilo getHilo2() {
-        return hilo2;
+    public Thread getThread2() {
+        return thread2;
     }
 
-    public void setHilo2(Hilo hilo2) {
-        this.hilo2 = hilo2;
+    public void setThread2(Thread thread2) {
+        this.thread2 = thread2;
     }
 }

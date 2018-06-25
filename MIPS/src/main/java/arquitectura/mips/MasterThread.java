@@ -6,7 +6,7 @@ import java.util.List;
 /**
  * Este es el hilo maestro que va a controlar el estado de los hilos.
  */
-public class HiloMaster implements Runnable {
+public class MasterThread implements Runnable {
 
     public List<EstadoHilillos> estadoHilillos;
 

@@ -1,6 +1,6 @@
 package arquitectura.mips;
 
-import arquitectura.mips.bloque.Bloque;
+import arquitectura.mips.block.Block;
 
 import java.util.UUID;
 
@@ -10,13 +10,13 @@ import java.util.UUID;
 public class EstadoHilillos {
 
     private UUID idHilillo;
-    private Estado estado;
-    private Bloque bloque;
+    private State state;
+    private Block block;
 
-    public EstadoHilillos(UUID id, Estado estado, Bloque b) {
+    public EstadoHilillos(UUID id, State state, Block b) {
         this.idHilillo = id;
-        this.estado = estado;
-        this.bloque = b;
+        this.state = state;
+        this.block = b;
     }
 
     public EstadoHilillos() {
@@ -31,19 +31,19 @@ public class EstadoHilillos {
         this.idHilillo = idHilillo;
     }
 
-    public Estado getEstado() {
-        return estado;
+    public State getState() {
+        return state;
     }
 
-    public void setEstado(Estado estado) {
-        this.estado = estado;
+    public void setState(State state) {
+        this.state = state;
     }
 
-    public Bloque getBloque() {
-        return bloque;
+    public Block getBlock() {
+        return block;
     }
 
-    public void setBloque(Bloque bloque) {
-        this.bloque = bloque;
+    public void setBlock(Block block) {
+        this.block = block;
     }
 }

@@ -1,35 +1,32 @@
 package arquitectura.mips;
 
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-
 /**
  * Created by alexiaborchgrevink on 6/11/18.
  */
 public class Hilillo {
 
-    private Contexto contexto;
+    private Context context;
     private int quantum;
 
     public Hilillo(int quantum, int pc) {
         this.quantum = quantum;
-        this.contexto = new Contexto(pc);
+        this.context = new Context(pc);
     }
 
     public Hilillo(int pc) {
-        this.contexto = new Contexto(pc);
+        this.context = new Context(pc);
     }
 
     public void ejecutar() {
 
     }
 
-    public Contexto getContexto() {
-        return contexto;
+    public Context getContext() {
+        return context;
     }
 
-    public void setContexto(Contexto contexto) {
-        this.contexto = contexto;
+    public void setContext(Context context) {
+        this.context = context;
     }
 
     public int getQuantum() {
