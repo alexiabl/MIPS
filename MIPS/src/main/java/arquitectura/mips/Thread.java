@@ -27,51 +27,51 @@ public class Thread { //corre el hilillo
         switch (instruction.get(0)) {
             case 8: //DADDI
                 DADDI();
-                this.hilillo.quitarQuantum();
+                this.hilillo.removeQuantum();
                 break;
             case 32:
                 DADD();
-                this.hilillo.quitarQuantum();
+                this.hilillo.removeQuantum();
                 break;
             case 34:
                 DSUB();
-                this.hilillo.quitarQuantum();
+                this.hilillo.removeQuantum();
                 break;
             case 12:
                 DMUL();
-                this.hilillo.quitarQuantum();
+                this.hilillo.removeQuantum();
                 break;
             case 14:
                 DDIV();
-                this.hilillo.quitarQuantum();
+                this.hilillo.removeQuantum();
                 break;
             case 4:
                 BEQZ();
-                this.hilillo.quitarQuantum();
+                this.hilillo.removeQuantum();
                 break;
             case 5:
                 BNEZ();
-                this.hilillo.quitarQuantum();
+                this.hilillo.removeQuantum();
                 break;
             case 3:
                 JAL();
-                this.hilillo.quitarQuantum();
+                this.hilillo.removeQuantum();
                 break;
             case 2:
                 JR();
-                this.hilillo.quitarQuantum();
+                this.hilillo.removeQuantum();
                 break;
             case 35:
                 //LW
-                this.hilillo.quitarQuantum();
+                this.hilillo.removeQuantum();
                 break;
             case 43:
                 //SW
-                this.hilillo.quitarQuantum();
+                this.hilillo.removeQuantum();
                 break;
             case 63:
                 FIN();
-                this.hilillo.quitarQuantum();
+                this.hilillo.removeQuantum();
                 break;
         }
     }

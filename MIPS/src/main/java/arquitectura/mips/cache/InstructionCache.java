@@ -7,12 +7,12 @@ import java.util.ArrayList;
 /**
  * Created by alexiaborchgrevink on 6/4/18.
  */
-public class CacheInstrucciones {
+public class InstructionCache {
 
     private ArrayList<BlockInstructions> instrucciones;
     private int tamano;
 
-    public CacheInstrucciones(int tamano) {
+    public InstructionCache(int tamano) {
         this.instrucciones = new ArrayList<BlockInstructions>();
         this.tamano = tamano;
         for (int i = 0; i < this.tamano; i++) {
@@ -21,7 +21,7 @@ public class CacheInstrucciones {
         }
     }
 
-    public CacheInstrucciones() {
+    public InstructionCache() {
         this.instrucciones = new ArrayList<BlockInstructions>();
     }
 

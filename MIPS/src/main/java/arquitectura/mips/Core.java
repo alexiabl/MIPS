@@ -1,22 +1,22 @@
 package arquitectura.mips;
 
-import arquitectura.mips.cache.CacheDatos;
-import arquitectura.mips.cache.CacheInstrucciones;
+import arquitectura.mips.cache.DataCache;
+import arquitectura.mips.cache.InstructionCache;
 
 /**
  * Created by alexiaborchgrevink on 6/4/18.
  */
 public class Core {
 
-    private CacheDatos cacheDatos;
-    private CacheInstrucciones cacheInstrucciones;
+    private DataCache dataCache;
+    private InstructionCache instructionCache;
     private boolean dobleHilo;
     private Thread thread1;
     private Thread thread2;
 
     public Core(boolean dobleHilo, int tamano) {
-        this.cacheDatos = new CacheDatos(tamano);
-        this.cacheInstrucciones = new CacheInstrucciones(tamano);
+        this.dataCache = new DataCache(tamano);
+        this.instructionCache = new InstructionCache(tamano);
         this.dobleHilo = dobleHilo;
         this.thread1 = new Thread();
         if (dobleHilo) {
@@ -24,20 +24,20 @@ public class Core {
         }
     }
 
-    public CacheDatos getCacheDatos() {
-        return cacheDatos;
+    public DataCache getDataCache() {
+        return dataCache;
     }
 
-    public void setCacheDatos(CacheDatos cacheDatos) {
-        this.cacheDatos = cacheDatos;
+    public void setDataCache(DataCache dataCache) {
+        this.dataCache = dataCache;
     }
 
-    public CacheInstrucciones getCacheInstrucciones() {
-        return cacheInstrucciones;
+    public InstructionCache getInstructionCache() {
+        return instructionCache;
     }
 
-    public void setCacheInstrucciones(CacheInstrucciones cacheInstrucciones) {
-        this.cacheInstrucciones = cacheInstrucciones;
+    public void setInstructionCache(InstructionCache instructionCache) {
+        this.instructionCache = instructionCache;
     }
 
     public boolean isDobleHilo() {

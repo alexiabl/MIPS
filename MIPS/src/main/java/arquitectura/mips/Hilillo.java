@@ -13,11 +13,11 @@ public class Hilillo {
         this.context = new Context(pc);
     }
 
-    public Hilillo(int pc) {
-        this.context = new Context(pc);
+    public Hilillo(int pci) {
+        this.context = new Context(pci);
     }
 
-    public void ejecutar() {
+    public void execute() {
 
     }
 
@@ -37,7 +37,7 @@ public class Hilillo {
         this.quantum = quantum;
     }
 
-    public void quitarQuantum() {
+    public void removeQuantum() {
         this.quantum--;
     }
 }

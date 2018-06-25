@@ -11,11 +11,11 @@ import java.io.IOException;
 public class App
 {
 
-    public static Simulation simulation;
+
 
     public static void main(String[] args) throws IOException {
 
-
+        Simulation simulation = new Simulation();
         simulation.executeSimulation();
         //unica cola de contextos para los dos nucleos
 

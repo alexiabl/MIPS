@@ -2,13 +2,14 @@ package arquitectura;
 
 import arquitectura.mips.*;
 import arquitectura.mips.Thread;
-import arquitectura.mips.cache.CacheDatos;
-import arquitectura.mips.cache.CacheInstrucciones;
+import arquitectura.mips.cache.DataCache;
+import arquitectura.mips.cache.InstructionCache;
 import arquitectura.mips.memory.InstructionsMemory;
 import arquitectura.mips.memory.MainMemory;
 import arquitectura.mips.util.Util;
 
 import java.io.IOException;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 import java.util.Random;
@@ -25,23 +26,24 @@ public class Simulation {
     private Core core0;
     private Core core1;
     private InstructionsMemory instructionsMemory;
-    private CacheDatos cacheDatos0;
-    private CacheDatos cacheDatos1;
-    private CacheInstrucciones cacheInstrucciones0;
-    private CacheInstrucciones cacheInstrucciones1;
+    private DataCache dataCache0;
+    private DataCache dataCache1;
+    private InstructionCache instructionCache0;
+    private InstructionCache instructionCache1;
     private List<Hilillo> hilillos;
     private List<Hilillo> hillillosBackup;
 
-    public Simulation(List<Hilillo> hililloList) {
+    public Simulation() {
         this.core0 = new Core(true, 4); //2 hilos
         this.core1 = new Core(false, 4); //1 hilo
         this.mainMemory = new MainMemory(8);
-        this.cacheDatos0 = core0.getCacheDatos();
-        this.cacheInstrucciones0 = core0.getCacheInstrucciones();
-        this.cacheDatos1 = core1.getCacheDatos();
-        this.cacheInstrucciones1 = core1.getCacheInstrucciones();
-        this.hilillos = hililloList;
-        this.hillillosBackup = hililloList;
+        this.dataCache0 = core0.getDataCache();
+        this.instructionCache0 = core0.getInstructionCache();
+        this.dataCache1 = core1.getDataCache();
+        this.instructionCache1 = core1.getInstructionCache();
+        this.hilillos = new LinkedList<Hilillo>();
+        //this.hilillos = hililloList;
+        //this.hillillosBackup = hililloList;
         this.masterThread = new MasterThread();
         this.thread1 = new Thread();
         this.thread2 = new Thread();
@@ -53,7 +55,7 @@ public class Simulation {
         util.leerArchivos();
 
         this.instructionsMemory = util.getInstructionsMemory();
-        Queue<Context> colaDeContexts = util.getColaDeContexts();
+        Queue<Context> contextQueue = util.getContextQueue();
 
         //asignar hilillo a hilo de manera random
         asignHilillo();

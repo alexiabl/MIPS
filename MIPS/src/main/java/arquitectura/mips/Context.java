@@ -16,7 +16,7 @@ public class Context {
     //start time
     //end time
 
-    public Context(int pc) {
+    public Context(int PCinitial) {
         this.id = UUID.randomUUID();
         this.registers = new ArrayList<Integer>(32);
 
@@ -24,7 +24,7 @@ public class Context {
             Integer value = new Integer(0);
             this.registers.add(value);
         }
-        this.PCinitial = pc;
+        this.PCinitial = PCinitial;
     }
 
     public int getPCinitial() {

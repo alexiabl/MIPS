@@ -18,7 +18,7 @@ public class Util {
 
     private InstructionsMemory instructionsMemory;
     private List<String> archivos;
-    private Queue<Context> colaDeContexts;
+    private Queue<Context> contextQueue;
     private Hilillo hilillo1;
     private Hilillo hilillo2;
     private Hilillo hilillo3;
@@ -40,42 +40,49 @@ public class Util {
         this.archivos.add(file3);
         this.archivos.add(file4);
         this.archivos.add(file5);
-        this.colaDeContexts = new LinkedList<Context>();
+        this.contextQueue = new LinkedList<Context>();
         this.hilillos = new LinkedList<Hilillo>();
     }
 
     public void leerArchivos() { //insertar en memoria principal
         //cada linea por 4 que son las instucciones
-        int contadorBloque = 0;
-        int posicionActual = 0;
+        int blockCounter = 0;
+        int currentPosition = 0;
+        int finalPosition = 0;
         for (int i = 0; i < this.archivos.size(); i++) {
             try {
                 FileReader fileReader = new FileReader(this.archivos.get(i));
                 BufferedReader bufferedReader = new BufferedReader(fileReader);
                 StringBuffer stringBuffer = new StringBuffer();
                 String line;
-                int cont = contadorBloque;
-                Context context = new Context(posicionActual);
-                Hilillo hilillo = new Hilillo(posicionActual);
+                int cont = blockCounter;
+                Context context = null;
+                if (currentPosition == 0) {
+                    context = new Context(currentPosition);
+                } else {
+                    context = new Context(currentPosition + 1);
+                }
+                Hilillo hilillo = new Hilillo(currentPosition);
                 this.hilillos.add(hilillo);
                 while ((line = bufferedReader.readLine()) != null) {
                     stringBuffer.append(line);
                     String[] split = line.split(" ");
-                    BlockInstructions bloqueInstrucciones = new BlockInstructions();
-                    bloqueInstrucciones.setNumBloque(contadorBloque);
+                    BlockInstructions instructionBlock = new BlockInstructions();
+                    instructionBlock.setNumBloque(blockCounter);
                     ArrayList<Integer> instrucciones = new ArrayList<Integer>();
                     for (int s = 0; s < split.length; s++) {
                         instrucciones.add(new Integer(split[s]));
                     }
-                    bloqueInstrucciones.setInstrucciones(instrucciones);
-                    this.instructionsMemory.addBloqueInstruccion(bloqueInstrucciones);
+                    instructionBlock.setInstructions(instrucciones);
+                    this.instructionsMemory.addBloqueInstruccion(instructionBlock);
                     cont++;
                     if ((cont % 4) == 0) {
-                        contadorBloque++;
+                        blockCounter++;
                     }
-                    posicionActual++;
+                    currentPosition++;
                 }
-                this.agregarAColaDeContextos(context);
+                context.setPCfinal(currentPosition);
+                this.addToContextQueue(context);
                 fileReader.close();
                 System.out.println(stringBuffer.toString());
             } catch (IOException e) {
@@ -85,16 +92,16 @@ public class Util {
         }
     }
 
-    public void agregarAColaDeContextos(Context c) {
-        this.colaDeContexts.add(c);
+    public void addToContextQueue(Context c) {
+        this.contextQueue.add(c);
     }
 
     public InstructionsMemory getInstructionsMemory() {
         return this.instructionsMemory;
     }
 
-    public Queue<Context> getColaDeContexts() {
-        return this.colaDeContexts;
+    public Queue<Context> getContextQueue() {
+        return this.contextQueue;
     }
 
     public List<Hilillo> getHilillos() {
