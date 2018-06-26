@@ -1,6 +1,7 @@
 package arquitectura.mips.cache;
 
 import arquitectura.mips.block.BlockInstructions;
+import arquitectura.mips.memory.InstructionsMemory;
 
 import java.util.ArrayList;
 
@@ -11,6 +12,7 @@ public class InstructionCache {
 
     private ArrayList<BlockInstructions> instrucciones;
     private int tamano;
+    public static InstructionCache instructionCache;
 
     public InstructionCache(int tamano) {
         this.instrucciones = new ArrayList<BlockInstructions>();
@@ -19,6 +21,13 @@ public class InstructionCache {
             BlockInstructions bloque = new BlockInstructions();
             this.instrucciones.add(bloque);
         }
+    }
+
+    public static InstructionCache getInstructionsCache() {
+        if (instructionCache == null) {
+            instructionCache = new InstructionCache();
+        }
+        return instructionCache;
     }
 
     public InstructionCache() {
