@@ -81,7 +81,7 @@ public class Util {
                 }
                 context.setPCfinal(currentPosition);
                 this.addToContextQueue(context);
-                Hilillo hilillo = new Hilillo();
+                Hilillo hilillo = new Hilillo(40);
                 this.hilillos.add(hilillo);
                 fileReader.close();
                 System.out.println(stringBuffer.toString());

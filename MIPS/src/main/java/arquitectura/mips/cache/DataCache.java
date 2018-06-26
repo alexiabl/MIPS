@@ -9,7 +9,6 @@ public class DataCache {
 
     private ArrayList<BlockCache> cache;
     private int tamano;
-    public static DataCache dataCache;
 
     public DataCache(int tamano) {
         this.cache = new ArrayList<BlockCache>();
@@ -20,12 +19,6 @@ public class DataCache {
         }
     }
 
-    public static DataCache getDataCache() {
-        if (dataCache == null) {
-            dataCache = new DataCache();
-        }
-        return dataCache;
-    }
 
     public DataCache() {
         this.cache = new ArrayList<BlockCache>();
