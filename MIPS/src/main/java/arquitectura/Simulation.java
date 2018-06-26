@@ -22,10 +22,8 @@ public class Simulation {
     private Thread thread1;
     private Thread thread2;
     private MasterThread masterThread;
-    private MainMemory mainMemory;
     private Core core0;
     private Core core1;
-    private InstructionsMemory instructionsMemory;
     private DataCache dataCache0;
     private DataCache dataCache1;
     private InstructionCache instructionCache0;
@@ -36,7 +34,6 @@ public class Simulation {
     public Simulation() {
         this.core0 = new Core(true, 4); //2 hilos
         this.core1 = new Core(false, 4); //1 hilo
-        this.mainMemory = new MainMemory(8);
         this.dataCache0 = core0.getDataCache();
         this.instructionCache0 = core0.getInstructionCache();
         this.dataCache1 = core1.getDataCache();
@@ -44,7 +41,6 @@ public class Simulation {
         this.hilillos = new LinkedList<Hilillo>();
         //this.hilillos = hililloList;
         //this.hillillosBackup = hililloList;
-        this.masterThread = new MasterThread();
         this.thread1 = new Thread();
         this.thread2 = new Thread();
     }
@@ -55,11 +51,16 @@ public class Simulation {
         util.readFiles();
 
         this.hilillos = util.getHilillos();
-        this.instructionsMemory = util.getInstructionsMemory();
+
         Queue<Context> contextQueue = util.getContextQueue();
 
+        MasterThread masterThread = new MasterThread();
         //asignar hilillo a hilo de manera random
         asignHilillo(contextQueue);
+        masterThread.setThread1(this.thread1);
+        masterThread.setThread2(this.thread2);
+        masterThread.run();
+
 
     }
 
@@ -87,7 +88,95 @@ public class Simulation {
             this.hilillos.remove(hilillo1);
 
         }
-
-
     }
+
+    public Thread getThread1() {
+        return thread1;
+    }
+
+    public void setThread1(Thread thread1) {
+        this.thread1 = thread1;
+    }
+
+    public Thread getThread2() {
+        return thread2;
+    }
+
+    public void setThread2(Thread thread2) {
+        this.thread2 = thread2;
+    }
+
+    public MasterThread getMasterThread() {
+        return masterThread;
+    }
+
+    public void setMasterThread(MasterThread masterThread) {
+        this.masterThread = masterThread;
+    }
+
+
+    public Core getCore0() {
+        return core0;
+    }
+
+    public void setCore0(Core core0) {
+        this.core0 = core0;
+    }
+
+    public Core getCore1() {
+        return core1;
+    }
+
+    public void setCore1(Core core1) {
+        this.core1 = core1;
+    }
+
+    public DataCache getDataCache0() {
+        return dataCache0;
+    }
+
+    public void setDataCache0(DataCache dataCache0) {
+        this.dataCache0 = dataCache0;
+    }
+
+    public DataCache getDataCache1() {
+        return dataCache1;
+    }
+
+    public void setDataCache1(DataCache dataCache1) {
+        this.dataCache1 = dataCache1;
+    }
+
+    public InstructionCache getInstructionCache0() {
+        return instructionCache0;
+    }
+
+    public void setInstructionCache0(InstructionCache instructionCache0) {
+        this.instructionCache0 = instructionCache0;
+    }
+
+    public InstructionCache getInstructionCache1() {
+        return instructionCache1;
+    }
+
+    public void setInstructionCache1(InstructionCache instructionCache1) {
+        this.instructionCache1 = instructionCache1;
+    }
+
+    public List<Hilillo> getHilillos() {
+        return hilillos;
+    }
+
+    public void setHilillos(List<Hilillo> hilillos) {
+        this.hilillos = hilillos;
+    }
+
+    public List<Hilillo> getHillillosBackup() {
+        return hillillosBackup;
+    }
+
+    public void setHillillosBackup(List<Hilillo> hillillosBackup) {
+        this.hillillosBackup = hillillosBackup;
+    }
+
 }

@@ -72,7 +72,7 @@ public class Util {
                         instrucciones.add(new Integer(split[s]));
                     }
                     instructionBlock.setInstructions(instrucciones);
-                    this.instructionsMemory.addBloqueInstruccion(instructionBlock);
+                    InstructionsMemory.getInstructionsMemoryInstance().addBloqueInstruccion(instructionBlock);
                     cont++;
                     if ((cont % 4) == 0) {
                         blockCounter++;
@@ -96,9 +96,6 @@ public class Util {
         this.contextQueue.add(c);
     }
 
-    public InstructionsMemory getInstructionsMemory() {
-        return this.instructionsMemory;
-    }
 
     public Queue<Context> getContextQueue() {
         return this.contextQueue;

@@ -1,12 +1,16 @@
 package arquitectura.mips;
 
+import arquitectura.mips.block.BlockInstructions;
+import arquitectura.mips.cache.InstructionCache;
+import arquitectura.mips.memory.InstructionsMemory;
+
 import java.util.ArrayList;
 import java.util.Collections;
 
 /**
  * Created by alexiaborchgrevink on 6/11/18.
  */
-public class Thread { //corre el hilillo
+public class Thread implements Runnable { //corre el hilillo
 
 //tiempo de ejecucion de cada hilillo
 
@@ -25,7 +29,7 @@ public class Thread { //corre el hilillo
 
     }
 
-    public void execute(ArrayList<Integer> instruction) { //despues de cada instruccion se le quita quantum
+    public void executeInstruction(ArrayList<Integer> instruction) { //despues de cada instruccion se le quita quantum
         switch (instruction.get(0)) {
             case 8: //DADDI
                 DADDI();
@@ -157,4 +161,15 @@ public class Thread { //corre el hilillo
     }
 
 
+    @Override
+    public void run() {
+        int endIR = this.hilillo.getContext().getPCfinal();
+        int count = 0;
+        while (this.PC <= endIR) {
+            BlockInstructions blockInstructions = InstructionsMemory.instructionsMemory.getInstrucciones().get(this.PC);
+            this.executeInstruction(blockInstructions.getInstructions());
+            this.PC += 1;
+        }
+
+    }
 }

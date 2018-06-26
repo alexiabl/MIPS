@@ -10,6 +10,7 @@ import java.util.ArrayList;
 public class InstructionsMemory {
 
     private ArrayList<BlockInstructions> instrucciones;
+    public static InstructionsMemory instructionsMemory;
 
 
     public InstructionsMemory() {
@@ -26,5 +27,16 @@ public class InstructionsMemory {
 
     public void addBloqueInstruccion(BlockInstructions bloqueInstrucciones) {
         this.instrucciones.add(bloqueInstrucciones);
+    }
+
+    public static InstructionsMemory getInstructionsMemoryInstance() {
+        if (instructionsMemory == null) {
+            instructionsMemory = new InstructionsMemory();
+        }
+        return instructionsMemory;
+    }
+
+    public static void setInstructionsMemory(InstructionsMemory instructionsMemory1) {
+        instructionsMemory = instructionsMemory1;
     }
 }
