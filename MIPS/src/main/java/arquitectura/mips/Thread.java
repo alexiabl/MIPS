@@ -167,6 +167,7 @@ public class Thread implements Runnable { //corre el hilillo
         int count = 0;
         while (this.PC <= endIR) {
             BlockInstructions blockInstructions = InstructionsMemory.instructionsMemory.getInstrucciones().get(this.PC);
+            this.IR = blockInstructions.getInstructions();
             this.executeInstruction(blockInstructions.getInstructions());
             this.PC += 1;
         }
