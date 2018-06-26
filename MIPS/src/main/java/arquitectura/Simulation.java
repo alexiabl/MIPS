@@ -41,8 +41,14 @@ public class Simulation {
         this.hilillos = new LinkedList<Hilillo>();
         //this.hilillos = hililloList;
         //this.hillillosBackup = hililloList;
+
         this.thread1 = new Thread();
+        this.thread1.setDataCache(dataCache0);
+        this.thread1.setInstructionCache(instructionCache0);
+
         this.thread2 = new Thread();
+        this.thread2.setDataCache(dataCache1);
+        this.thread2.setInstructionCache(instructionCache1);
     }
 
     public void executeSimulation() throws IOException {

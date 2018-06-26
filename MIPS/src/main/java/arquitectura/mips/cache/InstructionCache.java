@@ -12,7 +12,6 @@ public class InstructionCache {
 
     private ArrayList<BlockInstructions> instrucciones;
     private int tamano;
-    public static InstructionCache instructionCache;
 
     public InstructionCache(int tamano) {
         this.instrucciones = new ArrayList<BlockInstructions>();
@@ -23,12 +22,6 @@ public class InstructionCache {
         }
     }
 
-    public static InstructionCache getInstructionsCache() {
-        if (instructionCache == null) {
-            instructionCache = new InstructionCache();
-        }
-        return instructionCache;
-    }
 
     public InstructionCache() {
         this.instrucciones = new ArrayList<BlockInstructions>();

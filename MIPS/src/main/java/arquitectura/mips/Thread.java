@@ -1,6 +1,7 @@
 package arquitectura.mips;
 
 import arquitectura.mips.block.BlockInstructions;
+import arquitectura.mips.cache.DataCache;
 import arquitectura.mips.cache.InstructionCache;
 import arquitectura.mips.memory.InstructionsMemory;
 
@@ -18,11 +19,15 @@ public class Thread implements Runnable { //corre el hilillo
     private ArrayList<Integer> registers = new ArrayList<Integer>(32);
     private int PC;
     private Hilillo hilillo;
+    private DataCache dataCache;
+    private InstructionCache instructionCache;
 
-    public Thread(Hilillo hilillo) {
+    public Thread(Hilillo hilillo, DataCache dataCache, InstructionCache instructionCache) {
         this.hilillo = hilillo;
         this.PC = hilillo.getContext().getPCinitial();
         this.registers = hilillo.getContext().getRegisters();
+        this.dataCache = dataCache;
+        this.instructionCache = instructionCache;
     }
 
     public Thread() {
@@ -85,29 +90,29 @@ public class Thread implements Runnable { //corre el hilillo
 
     public void DADDI() {
         int resultado = this.registers.get(IR.get(1)) + IR.get(3);
-        this.registers.set(2, resultado);
+        this.registers.set(IR.get(2), resultado);
     }
 
     public void DADD() {
         int resultado = this.registers.get(IR.get(1)) + this.registers.get(IR.get(2));
-        this.registers.set(3, resultado);
+        this.registers.set(IR.get(3), resultado);
         //System.out.println(registers.get(3));
     }
 
     public void DSUB() {
         int resultado = registers.get(IR.get(1)) - registers.get(IR.get(2));
-        registers.set(3, resultado);
+        registers.set(IR.get(3), resultado);
     }
 
     public void DMUL() {
         int resultado = registers.get(IR.get(1)) * registers.get(IR.get(2));
-        registers.set(3, resultado);
+        registers.set(IR.get(3), resultado);
     }
 
     public void DDIV() {
         if (registers.get(IR.get(2)) != 0) {
             int resultado = registers.get(IR.get(1)) / registers.get(IR.get(2));
-            registers.set(3, resultado);
+            registers.set(IR.get(3), resultado);
         } else {
             System.out.println("Advertencia! Está dividiendo entre 0.");
         }
@@ -160,15 +165,32 @@ public class Thread implements Runnable { //corre el hilillo
         return this.hilillo;
     }
 
+    public DataCache getDataCache() {
+        return dataCache;
+    }
+
+    public void setDataCache(DataCache dataCache) {
+        this.dataCache = dataCache;
+    }
+
+    public InstructionCache getInstructionCache() {
+        return instructionCache;
+    }
+
+    public void setInstructionCache(InstructionCache instructionCache) {
+        this.instructionCache = instructionCache;
+    }
 
     @Override
     public void run() {
         int endIR = this.hilillo.getContext().getPCfinal();
-        int count = 0;
-        while (this.PC <= endIR) {
-            BlockInstructions blockInstructions = InstructionsMemory.instructionsMemory.getInstrucciones().get(this.PC);
+        int count = this.hilillo.getContext().getPCinitial();
+        while (count <= endIR) {
+            BlockInstructions blockInstructions = InstructionsMemory.getInstructionsMemoryInstance().getInstrucciones().get(this.PC);
+            this.IR = blockInstructions.getInstructions();
             this.executeInstruction(blockInstructions.getInstructions());
-            this.PC += 1;
+            count++;
+            this.PC++;
         }
 
     }
