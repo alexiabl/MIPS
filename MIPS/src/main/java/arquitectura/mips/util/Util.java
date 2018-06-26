@@ -1,10 +1,9 @@
 package arquitectura.mips.util;
 
-import arquitectura.mips.Contexto;
+import arquitectura.mips.Context;
 import arquitectura.mips.Hilillo;
-import arquitectura.mips.bloque.BloqueInstrucciones;
-import arquitectura.mips.memoria.MemoriaInstrucciones;
-import arquitectura.mips.memoria.MemoriaPrincipal;
+import arquitectura.mips.block.BlockInstructions;
+import arquitectura.mips.memory.InstructionsMemory;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -17,13 +16,19 @@ import java.util.Queue;
  */
 public class Util {
 
-    private MemoriaInstrucciones memoriaInstrucciones;
+    private InstructionsMemory instructionsMemory;
     private List<String> archivos;
-    private Queue<Contexto> colaDeContextos;
+    private Queue<Context> contextQueue;
+    private Hilillo hilillo1;
+    private Hilillo hilillo2;
+    private Hilillo hilillo3;
+    private Hilillo hilillo4;
+    private Hilillo hilillo5;
+    private List<Hilillo> hilillos;
 
 
     public Util() throws IOException {
-        this.memoriaInstrucciones = new MemoriaInstrucciones();
+        this.instructionsMemory = new InstructionsMemory();
         this.archivos = new LinkedList<String>();
         String file1 = "/Users/alexiaborchgrevink/Desktop/Arquitectura/Proyecto-MIPS/MIPS/MIPS/src/main/java/arquitectura/mips/util/1.txt";
         String file2 = "/Users/alexiaborchgrevink/Desktop/Arquitectura/Proyecto-MIPS/MIPS/MIPS/src/main/java/arquitectura/mips/util/2.txt";
@@ -35,39 +40,49 @@ public class Util {
         this.archivos.add(file3);
         this.archivos.add(file4);
         this.archivos.add(file5);
-        this.colaDeContextos = new LinkedList<Contexto>();
+        this.contextQueue = new LinkedList<Context>();
+        this.hilillos = new LinkedList<Hilillo>();
     }
 
-    public void leerArchivos() { //insertar en memoria principal
+    public void readFiles() { //insertar en memoria principal
         //cada linea por 4 que son las instucciones
-        int contadorBloque = 0;
-        int posicionActual = 0;
+        int blockCounter = 0;
+        int currentPosition = 0;
+        int finalPosition = 0;
         for (int i = 0; i < this.archivos.size(); i++) {
             try {
                 FileReader fileReader = new FileReader(this.archivos.get(i));
                 BufferedReader bufferedReader = new BufferedReader(fileReader);
                 StringBuffer stringBuffer = new StringBuffer();
                 String line;
-                int cont = contadorBloque;
-                Contexto contexto = new Contexto(posicionActual);
+                int cont = blockCounter;
+                Context context = null;
+                if (currentPosition == 0) {
+                    context = new Context(currentPosition);
+                } else {
+                    context = new Context(currentPosition + 1);
+                }
                 while ((line = bufferedReader.readLine()) != null) {
                     stringBuffer.append(line);
                     String[] split = line.split(" ");
-                    BloqueInstrucciones bloqueInstrucciones = new BloqueInstrucciones();
-                    bloqueInstrucciones.setNumBloque(contadorBloque);
+                    BlockInstructions instructionBlock = new BlockInstructions();
+                    instructionBlock.setNumBloque(blockCounter);
                     ArrayList<Integer> instrucciones = new ArrayList<Integer>();
                     for (int s = 0; s < split.length; s++) {
                         instrucciones.add(new Integer(split[s]));
                     }
-                    bloqueInstrucciones.setInstrucciones(instrucciones);
-                    this.memoriaInstrucciones.addBloqueInstruccion(bloqueInstrucciones);
+                    instructionBlock.setInstructions(instrucciones);
+                    this.instructionsMemory.addBloqueInstruccion(instructionBlock);
                     cont++;
                     if ((cont % 4) == 0) {
-                        contadorBloque++;
+                        blockCounter++;
                     }
-                    posicionActual++;
+                    currentPosition++;
                 }
-                this.agregarAColaDeContextos(contexto);
+                context.setPCfinal(currentPosition);
+                this.addToContextQueue(context);
+                Hilillo hilillo = new Hilillo();
+                this.hilillos.add(hilillo);
                 fileReader.close();
                 System.out.println(stringBuffer.toString());
             } catch (IOException e) {
@@ -77,16 +92,20 @@ public class Util {
         }
     }
 
-    public void agregarAColaDeContextos(Contexto c) {
-        this.colaDeContextos.add(c);
+    public void addToContextQueue(Context c) {
+        this.contextQueue.add(c);
     }
 
-    public MemoriaInstrucciones getMemoriaInstrucciones() {
-        return this.memoriaInstrucciones;
+    public InstructionsMemory getInstructionsMemory() {
+        return this.instructionsMemory;
     }
 
-    public Queue<Contexto> getColaDeContextos() {
-        return this.colaDeContextos;
+    public Queue<Context> getContextQueue() {
+        return this.contextQueue;
+    }
+
+    public List<Hilillo> getHilillos() {
+        return this.hilillos;
     }
 
 

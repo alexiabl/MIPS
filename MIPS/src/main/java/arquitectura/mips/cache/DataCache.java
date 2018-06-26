@@ -5,29 +5,29 @@ import java.util.ArrayList;
 /**
  * Created by alexiaborchgrevink on 6/4/18.
  */
-public class CacheDatos {
+public class DataCache {
 
-    private ArrayList<BloqueCache> cache;
+    private ArrayList<BlockCache> cache;
     private int tamano;
 
-    public CacheDatos(int tamano) {
-        this.cache = new ArrayList<BloqueCache>();
+    public DataCache(int tamano) {
+        this.cache = new ArrayList<BlockCache>();
         this.tamano = tamano;
         for (int i = 0; i < this.tamano; i++) {
-            BloqueCache bloque = new BloqueCache();
+            BlockCache bloque = new BlockCache();
             this.cache.add(bloque);
         }
     }
 
-    public CacheDatos() {
-        this.cache = new ArrayList<BloqueCache>();
+    public DataCache() {
+        this.cache = new ArrayList<BlockCache>();
     }
 
-    public ArrayList<BloqueCache> getCache() {
+    public ArrayList<BlockCache> getCache() {
         return cache;
     }
 
-    public void setCache(ArrayList<BloqueCache> cache) {
+    public void setCache(ArrayList<BlockCache> cache) {
         this.cache = cache;
     }
 

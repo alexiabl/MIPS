@@ -1,15 +1,8 @@
 package arquitectura.mips;
 
-import arquitectura.mips.cache.CacheDatos;
-import arquitectura.mips.cache.CacheInstrucciones;
-import arquitectura.mips.memoria.MemoriaInstrucciones;
-import arquitectura.mips.memoria.MemoriaPrincipal;
-import arquitectura.mips.util.Util;
+import arquitectura.Simulation;
 
 import java.io.IOException;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Queue;
 
 /**
  * Hello world!
@@ -17,29 +10,13 @@ import java.util.Queue;
  */
 public class App
 {
-    public static void ejecutarSimulacion() throws IOException {
-
-        Nucleo nucleo0 = new Nucleo(true, 4); //2 hilos
-        Nucleo nucleo1 = new Nucleo(false, 4); //1 hilo
-        MemoriaPrincipal memoriaPrincipal = new MemoriaPrincipal(8);
-        CacheDatos cacheDatos0 = nucleo0.getCacheDatos();
-        CacheInstrucciones cacheInstrucciones0 = nucleo0.getCacheInstrucciones();
-        CacheDatos cacheDatos1 = nucleo1.getCacheDatos();
-        CacheInstrucciones cacheInstrucciones1 = nucleo1.getCacheInstrucciones();
-
-        Util util = new Util();
-        util.leerArchivos();
-
-        MemoriaInstrucciones memoriaInstrucciones = util.getMemoriaInstrucciones();
-        Queue<Contexto> colaDeContextos = util.getColaDeContextos();
 
 
-    }
 
     public static void main(String[] args) throws IOException {
 
-
-        ejecutarSimulacion();
+        Simulation simulation = new Simulation();
+        simulation.executeSimulation();
         //unica cola de contextos para los dos nucleos
 
         //1. leer todos los archivos y meterlo a la memoria de instrucciones. Al mismo asignar el PC al contexto de

@@ -5,13 +5,13 @@ import java.util.ArrayList;
 /**
  * Created by alexiaborchgrevink on 6/4/18.
  */
-public class BloqueCache {
+public class BlockCache {
 
     private int etiqueta;
     private char estado;
     private ArrayList<Integer> palabras;
 
-    public BloqueCache() {
+    public BlockCache() {
         this.palabras = new ArrayList<Integer>();
 
     }
