@@ -44,7 +44,7 @@ public class Util {
         this.hilillos = new LinkedList<Hilillo>();
     }
 
-    public void leerArchivos() { //insertar en memoria principal
+    public void readFiles() { //insertar en memoria principal
         //cada linea por 4 que son las instucciones
         int blockCounter = 0;
         int currentPosition = 0;
@@ -62,8 +62,6 @@ public class Util {
                 } else {
                     context = new Context(currentPosition + 1);
                 }
-                Hilillo hilillo = new Hilillo(currentPosition);
-                this.hilillos.add(hilillo);
                 while ((line = bufferedReader.readLine()) != null) {
                     stringBuffer.append(line);
                     String[] split = line.split(" ");
@@ -83,6 +81,8 @@ public class Util {
                 }
                 context.setPCfinal(currentPosition);
                 this.addToContextQueue(context);
+                Hilillo hilillo = new Hilillo();
+                this.hilillos.add(hilillo);
                 fileReader.close();
                 System.out.println(stringBuffer.toString());
             } catch (IOException e) {

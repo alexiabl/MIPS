@@ -8,13 +8,11 @@ public class Hilillo {
     private Context context;
     private int quantum;
 
-    public Hilillo(int quantum, int pc) {
+    public Hilillo(int quantum) {
         this.quantum = quantum;
-        this.context = new Context(pc);
     }
 
-    public Hilillo(int pci) {
-        this.context = new Context(pci);
+    public Hilillo() {
     }
 
     public void execute() {

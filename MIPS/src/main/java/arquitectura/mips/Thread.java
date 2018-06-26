@@ -17,6 +17,8 @@ public class Thread { //corre el hilillo
 
     public Thread(Hilillo hilillo) {
         this.hilillo = hilillo;
+        this.PC = hilillo.getContext().getPCinitial();
+        this.registers = hilillo.getContext().getRegisters();
     }
 
     public Thread() {
@@ -146,6 +148,8 @@ public class Thread { //corre el hilillo
 
     public void setHilillo(Hilillo hilillo) {
         this.hilillo = hilillo;
+        this.PC = hilillo.getContext().getPCinitial();
+        this.registers = hilillo.getContext().getRegisters();
     }
 
     public Hilillo getHilillo() {
