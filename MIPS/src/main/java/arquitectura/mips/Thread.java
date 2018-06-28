@@ -143,6 +143,152 @@ public class Thread implements Runnable { //corre el hilillo
 
     }
 
+    public void LW() {
+        int numeroBloque = getNumeroDeBloque(IR.get(1), 16);
+        int numeroPalabra = getNumeroDePalabra(IR.get(1), 16, 4);
+        int posicionCache = getPosicionCache(numeroBloque, dataCache.getTamano());
+        //bloquear posicion cache!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        if (dataCache.getCache().get(posicionCache).getEtiqueta() == numeroBloque) {
+            if (dataCache.getCache().get(posicionCache).getEstado() == 'M' || dataCache.getCache().get(posicionCache).getEstado() == 'C') {
+                registers.set(IR.get(2), dataCache.getCache().get(posicionCache).getPalabras().get(numeroPalabra));
+                //desbloquear posicion
+            } else {
+                //bloquear bus
+                //acceder a la otra caché
+                otraCache(numeroBloque, numeroPalabra, posicionCache);
+
+            }
+        } else {
+            //gets de la otra cache
+            if (dataCache.getCache().get(posicionCache).getEtiqueta() != numeroBloque) {
+                //gets de la otra cache
+                if (dataCache.getCache().get(posicionCache).getEstado() == 'M') {
+                    //copiar bloque en memoria
+                    //cambiarle el estado a invalido
+                    ///!!!bloquear posicion en cache
+                    otraCache(numeroBloque, numeroPalabra, posicionCache);
+                }
+            }
+        }
+    }
+
+    public void otraCache(int numeroBloque, int numeroPalabra, int posicionCache) {
+        //el if es parecido pero haciendo get de la cache del otro nucleo
+        if (dataCache.getCache().get(posicionCache).getEtiqueta() == numeroBloque) {
+            //el if es con la cache del otro lado
+            if (dataCache.getCache().get(posicionCache).getEstado() == 'C') {
+                //liberar posicion en otra cache
+                //gets de la otra cache
+                //subir bloque de memoria
+                //liberar posicion en esta cache
+            } else if (dataCache.getCache().get(posicionCache).getEstado() == 'M') {
+                //guardar en memoria lo que está en caché
+                //sobreescribir en la otra cache lo que esta en la cache actual
+                //cambiar el estado en el otro lado a C
+                //liberar posicion y bus en la otra cache
+
+                //los gets con la cache del otro lado
+                registers.set(IR.get(2), dataCache.getCache().get(posicionCache).getPalabras().get(numeroPalabra));
+                //liberar posicion de esta cache
+            } else if (dataCache.getCache().get(posicionCache).getEstado() == 'I') {
+                //liberar posicion en caché
+                //almacenar en el bloque de la cache el bloque corrspondiente de memoria
+                //cambiar el estado a M
+                //liberar bus
+
+                //los gets con la cache del otro lado
+                registers.set(IR.get(2), dataCache.getCache().get(posicionCache).getPalabras().get(numeroPalabra));
+                //liberar posicion de esta cache
+            }
+        }
+    }
+
+    public void SW() {
+        int numeroBloque = getNumeroDeBloque(IR.get(1), 16);
+        int numeroPalabra = getNumeroDePalabra(IR.get(1), 16, 4);
+        int posicionCache = getPosicionCache(numeroBloque, dataCache.getTamano());
+        //bloquear posicion cache!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        if (dataCache.getCache().get(posicionCache).getEtiqueta() == numeroBloque) {
+            if (dataCache.getCache().get(posicionCache).getEstado() == 'M') {
+                dataCache.getCache().get(posicionCache).setPalabra(numeroPalabra, registers.get(IR.get(2)));
+                //liberar posicion en esta cache
+                //avanza el reloj
+            } else if (dataCache.getCache().get(posicionCache).getEstado() == 'C') {
+                //se bloquea bus
+                //bloquear posicion en otra cache
+                //gets de otra cache
+                if (dataotraCache.getCache().get(posicionCache).getEstado() == 'C') {
+                    dataCache.getCache().get(posicionCache).setEstado('M');
+                    dataotraCache.getCache().get(posicionCache).setEstado('I');
+                }
+                //se sobreescribe en memoria el bloque
+                //liberar la posicion en caché
+            } else if (dataCache.getCache().get(posicionCache).getEstado() == 'I') {
+                //bloquea el bus
+                //bloquea la posicion en la otra cache
+                //revisa otra cache
+                if (dataOtraCache.getCache().get(posicionCache).getEtiqueta() == numeroBloque) {
+                    if (dataotraCache.getCache().get(posicionCache).getEstado() == 'C') {
+                        dataotraCache.getCache().get(posicionCache).setEstado('I');
+                        //libera pos caché
+                        //libera bus
+                        //el bloque se sube de memoria y avanza un ciclo de reloj
+                    } else if (dataotraCache.getCache().get(posicionCache).getEstado() == 'M') {
+                        //se copia el bloque a memoria y a caché
+                        //libera pos otra caché
+                        //libera bus
+                        dataCache.getCache().get(posicionCache).setPalabra(numeroPalabra, registers.get(IR.get(2)));
+                        dataCache.getCache().get(posicionCache).setEstado('M');
+                        //libera pos caché
+                    }
+                }
+
+
+            }
+        } else {
+
+
+            //gets de la otra cache
+            if (dataCache.getCache().get(posicionCache).getEtiqueta() != numeroBloque) {
+                //gets de la otra cache
+                if (dataCache.getCache().get(posicionCache).getEstado() == 'M') {
+                    //copiar bloque en memoria
+                    //cambiarle el estado a invalido
+                    ///!!!bloquear posicion en cache
+                    if (dataOtraCache.getCache().get(posicionCache).getEtiqueta() == numeroBloque) {
+                        if (dataOtraCache.getCache().get(posicionCache).getEstado() == 'C') {
+                            //se sube a propia cache de memoria
+                            //se libera la posicion de cache
+                            //se avanza ciclo reloj
+
+
+                        } else if (dataOtraCache.getCache().get(posicionCache).getEstado() == 'M') {
+                            //copia el bloque a memoria y a la otra cache
+                            dataCache.getCache().get(posicionCache).setEstado('I');
+                            //se libera el bus
+                            //se libera la otra posicion de cache
+                            dataOtraCache.getCache().get(posicionCache).setPalabra(numeroPalabra, registers.get(IR.get(2)));
+                            //se libera cache
+                            //avanza el reloj
+
+                        } else if (dataOtraCache.getCache().get(posicionCache).getEstado() == 'I') {
+                            //se libera posicion de cache
+                            //Se sube el bloque a propia cache desde memoria
+                            //se libera esa posicion
+                            //avanza el reloj
+                        }
+                    } else {
+                        //traerbloque de memoria
+                        //guardar dato en cache propia
+                        //liberar bus
+                        //liberar posicion en cache
+                    }
+
+                }
+            }
+        }
+    }
+
     public void setIR(ArrayList<Integer> p) {
         this.IR = p;
     }
@@ -180,6 +326,19 @@ public class Thread implements Runnable { //corre el hilillo
     public void setInstructionCache(InstructionCache instructionCache) {
         this.instructionCache = instructionCache;
     }
+
+    int getNumeroDeBloque(int posicion, int tamBloqueMemoria) {
+        return posicion / tamBloqueMemoria;
+    }
+
+    int getNumeroDePalabra(int posicion, int tamBloqueMemoria, int bytesPalabra) {
+        return (posicion % tamBloqueMemoria) / bytesPalabra;
+    }
+
+    int getPosicionCache(int numDeBloque, int tamCache) {
+        return numDeBloque % tamCache;
+    }
+
 
     @Override
     public void run() {

@@ -39,4 +39,6 @@ public class BlockCache {
     public void setPalabras(ArrayList<Integer> palabras) {
         this.palabras = palabras;
     }
+
+    public void setPalabra(int pos, int value) { this.palabras.set(pos, value); }
 }
