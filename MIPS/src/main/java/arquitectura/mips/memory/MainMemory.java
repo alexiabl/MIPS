@@ -29,5 +29,11 @@ public class MainMemory {
         this.datos = new ArrayList<BlockData>();
     }
 
+    public int getTamano() {
+        return tamano;
+    }
 
+    public void setTamano(int tamano) {
+        this.tamano = tamano;
+    }
 }

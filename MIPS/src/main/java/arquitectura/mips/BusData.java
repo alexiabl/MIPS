@@ -1,21 +1,23 @@
 package arquitectura.mips;
 
+import java.util.concurrent.Semaphore;
+
 /**
  * Created by alexiaborchgrevink on 6/11/18.
  */
 public class BusData {
 
-    private boolean blocked;
+    public Semaphore lock;
+    public static BusData busData;
 
     public BusData() {
-        this.blocked = false;
     }
 
-    public boolean isBlocked() {
-        return blocked;
-    }
 
-    public void setBlocked(boolean blocked) {
-        this.blocked = blocked;
+    public static BusData getBusDataInsance() {
+        if (busData == null) {
+            busData = new BusData();
+        }
+        return busData;
     }
 }

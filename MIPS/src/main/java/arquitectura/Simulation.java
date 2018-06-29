@@ -32,23 +32,21 @@ public class Simulation {
     private List<Hilillo> hillillosBackup;
 
     public Simulation() {
-        this.core0 = new Core(true, 4); //2 hilos
-        this.core1 = new Core(false, 4); //1 hilo
-        this.dataCache0 = core0.getDataCache();
-        this.instructionCache0 = core0.getInstructionCache();
-        this.dataCache1 = core1.getDataCache();
-        this.instructionCache1 = core1.getInstructionCache();
+        this.dataCache0 = new DataCache(8);
+        this.dataCache1 = new DataCache(8);
+        this.dataCache0.setRemoteCache(dataCache1);
+        this.dataCache1.setRemoteCache(dataCache0);
+
+        this.instructionCache0 = new InstructionCache();
+        this.instructionCache1 = new InstructionCache();
+        this.instructionCache0.setRemoteInstructionCache(instructionCache1);
+        this.instructionCache1.setRemoteInstructionCache(instructionCache0);
+
         this.hilillos = new LinkedList<Hilillo>();
-        //this.hilillos = hililloList;
-        //this.hillillosBackup = hililloList;
 
-        this.thread1 = new Thread();
-        this.thread1.setDataCache(dataCache0);
-        this.thread1.setInstructionCache(instructionCache0);
+        this.core0 = new Core(8);
+        this.core1 = new Core(8);
 
-        this.thread2 = new Thread();
-        this.thread2.setDataCache(dataCache1);
-        this.thread2.setInstructionCache(instructionCache1);
     }
 
     public void executeSimulation() throws IOException {
@@ -60,12 +58,30 @@ public class Simulation {
 
         Queue<Context> contextQueue = util.getContextQueue();
 
+        this.thread1 = new Thread();
+        this.thread2 = new Thread();
         MasterThread masterThread = new MasterThread();
         //asignar hilillo a hilo de manera random
-        asignHilillo(contextQueue);
-        masterThread.setThread1(this.thread1);
-        masterThread.setThread2(this.thread2);
-        masterThread.run();
+        this.thread1.setInstructionCache(this.instructionCache0);
+        this.thread2.setInstructionCache(this.instructionCache1);
+        this.thread1.setDataCache(this.dataCache0);
+        this.thread2.setDataCache(this.dataCache1);
+        // this.thread1 = new Thread(dataCache0,instructionCache0);
+        //this.thread2 = new Thread(dataCache1,instructionCache1);
+
+        core0.setThread(this.thread1);
+        core1.setThread(this.thread2);
+
+        while (!contextQueue.isEmpty()) {
+            asignHilillo(contextQueue);
+            this.thread1.run();
+            this.thread2.run();
+        }
+
+
+        //masterThread.setThread1(this.thread1);
+        //masterThread.setThread2(this.thread2);
+        //masterThread.run();
 
 
     }
