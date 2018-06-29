@@ -1,6 +1,8 @@
 package arquitectura.mips.cache;
 
 import java.util.ArrayList;
+import java.util.concurrent.Semaphore;
+import java.util.concurrent.locks.Lock;
 
 /**
  * Created by alexiaborchgrevink on 6/4/18.
@@ -8,21 +10,20 @@ import java.util.ArrayList;
 public class DataCache {
 
     private ArrayList<BlockCache> cache;
-    private int tamano;
+    private int size;
+    public Semaphore dataCacheLock;
+    private DataCache remoteCache;
 
-    public DataCache(int tamano) {
+    public DataCache(int size) {
         this.cache = new ArrayList<BlockCache>();
-        this.tamano = tamano;
-        for (int i = 0; i < this.tamano; i++) {
+        this.size = size;
+        for (int i = 0; i < this.size; i++) {
             BlockCache bloque = new BlockCache();
             this.cache.add(bloque);
         }
+        //this.dataCacheLock.unlock();
     }
 
-
-    public DataCache() {
-        this.cache = new ArrayList<BlockCache>();
-    }
 
     public ArrayList<BlockCache> getCache() {
         return cache;
@@ -32,11 +33,19 @@ public class DataCache {
         this.cache = cache;
     }
 
-    public int getTamano() {
-        return tamano;
+    public int getSize() {
+        return size;
     }
 
-    public void setTamano(int tamano) {
-        this.tamano = tamano;
+    public void setSize(int size) {
+        this.size = size;
+    }
+
+    public DataCache getRemoteCache() {
+        return remoteCache;
+    }
+
+    public void setRemoteCache(DataCache remoteCache) {
+        this.remoteCache = remoteCache;
     }
 }

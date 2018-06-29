@@ -15,10 +15,6 @@ public class Hilillo {
     public Hilillo() {
     }
 
-    public void execute() {
-
-    }
-
     public Context getContext() {
         return context;
     }

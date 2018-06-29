@@ -4,6 +4,8 @@ import arquitectura.mips.block.BlockInstructions;
 import arquitectura.mips.memory.InstructionsMemory;
 
 import java.util.ArrayList;
+import java.util.concurrent.Semaphore;
+import java.util.concurrent.locks.Lock;
 
 /**
  * Created by alexiaborchgrevink on 6/4/18.
@@ -12,6 +14,8 @@ public class InstructionCache {
 
     private ArrayList<BlockInstructions> instrucciones;
     private int tamano;
+    public Semaphore instructionCacheLock;
+    private InstructionCache remoteInstructionCache;
 
     public InstructionCache(int tamano) {
         this.instrucciones = new ArrayList<BlockInstructions>();
@@ -41,5 +45,13 @@ public class InstructionCache {
 
     public void setTamano(int tamano) {
         this.tamano = tamano;
+    }
+
+    public InstructionCache getRemoteInstructionCache() {
+        return remoteInstructionCache;
+    }
+
+    public void setRemoteInstructionCache(InstructionCache remoteInstructionCache) {
+        this.remoteInstructionCache = remoteInstructionCache;
     }
 }

@@ -3,25 +3,21 @@ package arquitectura.mips;
 import arquitectura.mips.cache.DataCache;
 import arquitectura.mips.cache.InstructionCache;
 
+import java.util.ArrayList;
+
 /**
  * Created by alexiaborchgrevink on 6/4/18.
  */
 public class Core {
 
     private DataCache dataCache;
+    //arrayblockingqueue
     private InstructionCache instructionCache;
-    private boolean dobleHilo;
-    private Thread thread1;
-    private Thread thread2;
+    private Thread thread;
 
-    public Core(boolean dobleHilo, int tamano) {
-        this.dataCache = new DataCache(tamano);
-        this.instructionCache = new InstructionCache(tamano);
-        this.dobleHilo = dobleHilo;
-        this.thread1 = new Thread();
-        if (dobleHilo) {
-            this.thread2 = new Thread();
-        }
+
+    public Core(int tamano) {
+
     }
 
     public DataCache getDataCache() {
@@ -40,27 +36,13 @@ public class Core {
         this.instructionCache = instructionCache;
     }
 
-    public boolean isDobleHilo() {
-        return dobleHilo;
+    public Thread getThread() {
+        return thread;
     }
 
-    public void setDobleHilo(boolean dobleHilo) {
-        this.dobleHilo = dobleHilo;
+    public void setThread(Thread thread) {
+        this.thread = thread;
     }
 
-    public Thread getThread1() {
-        return thread1;
-    }
 
-    public void setThread1(Thread thread1) {
-        this.thread1 = thread1;
-    }
-
-    public Thread getThread2() {
-        return thread2;
-    }
-
-    public void setThread2(Thread thread2) {
-        this.thread2 = thread2;
-    }
 }
