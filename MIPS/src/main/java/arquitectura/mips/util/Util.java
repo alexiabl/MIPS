@@ -85,7 +85,6 @@ public class Util {
                 Hilillo hilillo = new Hilillo(40);
                 this.hilillos.add(hilillo);
                 fileReader.close();
-                System.out.println(stringBuffer.toString());
             } catch (IOException e) {
                 e.printStackTrace();
             }

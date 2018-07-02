@@ -70,22 +70,19 @@ public class Simulation {
         core0.setThread(this.thread1);
         core1.setThread(this.thread2);
 
-        while (!contextQueue.isEmpty()) {
+        while (!contextQueue.isEmpty() & contextQueue.size() >= 2) {
             asignHilillo(contextQueue);
             //thread1.getHilillo().getContext().setRegisters(core0.getRegisters());
             this.thread1.run();
             //thread2.getHilillo().getContext().setRegisters(core1.getRegisters());
             this.thread2.run();
-            for (int i = 0; i < this.thread1.getHilillo().getContext().getRegisters().size(); i++) {
-                System.out.println("R[" + i + "] = " + this.thread1.getHilillo().getContext().getRegisters().get(i));
-            }
-            for (int i = 0; i < this.thread2.getHilillo().getContext().getRegisters().size(); i++) {
-                System.out.println("R[" + i + "] = " + this.thread2.getHilillo().getContext().getRegisters().get(i));
-            }
 
         }
-
-
+        if (contextQueue.size() < 2) {
+            this.hilillos.get(0).setContext(contextQueue.poll());
+            this.thread1.setHilillo(this.hilillos.get(0));
+            this.thread1.run();
+        }
         printSharedMemory();
         printDataCache();
 
@@ -133,13 +130,13 @@ public class Simulation {
             System.out.println("Position: " + i);
             System.out.println("    Block: " + this.dataCache0.getCache().get(i).getEtiqueta());
             System.out.println("    Status: " + this.dataCache0.getCache().get(i).getEstado());
-            System.out.print("     Words: ");
+            System.out.print("  Words: ");
             for (int j = 0; j < this.dataCache0.getCache().get(i).getPalabras().size(); j++) {
                 System.out.print(this.dataCache0.getCache().get(i).getPalabras().get(j) + " ");
             }
 
         }
-        System.out.println("Core 1 Data Cache:");
+        System.out.println("\nCore 1 Data Cache:");
         for (int i = 0; i < this.dataCache1.getCache().size(); i++) {
             System.out.println("Position: " + i);
             System.out.println("    Block: " + this.dataCache1.getCache().get(i).getEtiqueta());
