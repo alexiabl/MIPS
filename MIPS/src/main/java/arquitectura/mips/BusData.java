@@ -3,7 +3,7 @@ package arquitectura.mips;
 import java.util.concurrent.Semaphore;
 
 /**
- * Created by alexiaborchgrevink on 6/11/18.
+ * Bus for Data operations. Uses singleton pattern as we need the BusData to be shared in our program.
  */
 public class BusData {
 

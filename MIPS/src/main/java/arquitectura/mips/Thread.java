@@ -12,11 +12,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 /**
- * Created by alexiaborchgrevink on 6/11/18.
+ * Core processor that executes instructions
  */
-public class Thread implements Runnable { //corre el hilillo
-
-//tiempo de ejecucion de cada hilillo
+public class Thread extends java.lang.Thread { //corre el hilillo
 
     private ArrayList<Integer> IR;
     private ArrayList<Integer> registers = new ArrayList<Integer>(32);
@@ -24,14 +22,16 @@ public class Thread implements Runnable { //corre el hilillo
     private Hilillo hilillo;
     private DataCache dataCache;
     private InstructionCache instructionCache;
+    private int cycles;
 
     public Thread(DataCache dataCache, InstructionCache instructionCache) {
         this.dataCache = dataCache;
         this.instructionCache = instructionCache;
+        this.cycles = 0;
     }
 
     public Thread() {
-
+        this.cycles = 0;
     }
 
     public void setIR(ArrayList<Integer> p) {
@@ -50,26 +50,6 @@ public class Thread implements Runnable { //corre el hilillo
         this.hilillo = hilillo;
         this.PC = hilillo.getContext().getPCinitial();
         this.registers = hilillo.getContext().getRegisters();
-    }
-
-    public Hilillo getHilillo() {
-        return this.hilillo;
-    }
-
-    public DataCache getDataCache() {
-        return this.dataCache;
-    }
-
-    public void setDataCache(DataCache dataCache) {
-        this.dataCache = dataCache;
-    }
-
-    public InstructionCache getInstructionCache() {
-        return instructionCache;
-    }
-
-    public void setInstructionCache(InstructionCache instructionCache) {
-        this.instructionCache = instructionCache;
     }
 
     int getNumeroDeBloque(int posicion, int tamBloqueMemoria) {
@@ -110,7 +90,7 @@ public class Thread implements Runnable { //corre el hilillo
                                 otherCache.dataCacheLock.release();//será??????
                             } else if (otherCache.getCache().get(posicionCache).getEstado() == 'M') {
 
-                                MainMemory.getMainMemoryInstance().setDatosBloque(IR.get(1), otherCache.getCache().get(posicionCache).getPalabras());
+                                MainMemory.getMainMemoryInstance().setDatosBloque(numeroBloque, otherCache.getCache().get(posicionCache).getPalabras());
                                 //this.dataCache.setBloqueCache(posicionCache,otherCache.getBloqueCache(posicionCache));
                                 this.dataCache.getCache().set(posicionCache, otherCache.getCache().get(posicionCache));
                                 this.dataCache.getCache().get(posicionCache).setEstado('C');
@@ -131,7 +111,7 @@ public class Thread implements Runnable { //corre el hilillo
                                 this.dataCache.dataCacheLock.release();//será??????
                             }
                         } else {
-                            MainMemory.getMainMemoryInstance().setDatosBloque(IR.get(1), dataCache.getCache().get(posicionCache).getPalabras());
+                            MainMemory.getMainMemoryInstance().setDatosBloque(numeroBloque, dataCache.getCache().get(posicionCache).getPalabras());
                             registers.set(IR.get(2), dataCache.getCache().get(posicionCache).getPalabras().get(numeroPalabra));
                             BusData.getBusDataInsance().lock.release();//creo que asi se hace
                             this.dataCache.dataCacheLock.release();//será??????
@@ -150,6 +130,8 @@ public class Thread implements Runnable { //corre el hilillo
         } else {
             //NO SE BLOQUEO LA POSICION... AUMENTAR CICLO DE RELOJ
         }
+        Clock.executeBarrier();
+
     }
 
     /*public void LW2() {
@@ -282,6 +264,7 @@ public class Thread implements Runnable { //corre el hilillo
         } else {
             //AUMENTAR CICLO DE RELOJ!!!
         }
+        Clock.executeBarrier();
     }
 
     public void executeInstruction(ArrayList<Integer> instruction) { //despues de cada instruccion se le quita quantum
@@ -341,22 +324,25 @@ public class Thread implements Runnable { //corre el hilillo
     public void DADDI() {
         int resultado = this.registers.get(IR.get(1)) + IR.get(3);
         this.registers.set(IR.get(2), resultado);
+        //Clock.executeBarrier();
     }
 
     public void DADD() {
         int resultado = this.registers.get(IR.get(1)) + this.registers.get(IR.get(2));
         this.registers.set(IR.get(3), resultado);
-        //System.out.println(registers.get(3));
+        //Clock.executeBarrier();
     }
 
     public void DSUB() {
         int resultado = registers.get(IR.get(1)) - registers.get(IR.get(2));
         registers.set(IR.get(3), resultado);
+        //Clock.executeBarrier();
     }
 
     public void DMUL() {
         int resultado = registers.get(IR.get(1)) * registers.get(IR.get(2));
         registers.set(IR.get(3), resultado);
+        //Clock.executeBarrier();
     }
 
     public void DDIV() {
@@ -366,44 +352,86 @@ public class Thread implements Runnable { //corre el hilillo
         } else {
             System.out.println("Advertencia! Está dividiendo entre 0.");
         }
+        //Clock.executeBarrier();
+
     }
 
     public void BEQZ() {
         if (registers.get(IR.get(1)) == 0) {
             PC = PC + 4 * IR.get(3);
+            //Clock.executeBarrier();
         }
     }
 
     public void BNEZ() {
         if (registers.get(IR.get(1)) != 0) {
             PC = PC + 4 * IR.get(3);
+            //Clock.executeBarrier();
         }
     }
 
     public void JAL() {
         registers.set(31, PC);
         PC = PC + IR.get(3);
+        //Clock.executeBarrier();
     }
 
     public void JR() {
         PC = registers.get(IR.get(1));
+        //Clock.executeBarrier();
     }
 
     public void FIN() {
-
+        System.out.println("Thread finished");
+        printRegisters();
     }
 
     @Override
     public void run() {
+        System.out.println("Thread " + this.getName() + "corriendo");
         int endIR = this.hilillo.getContext().getPCfinal();
         int count = this.hilillo.getContext().getPCinitial();
         while (count <= endIR) {
-            BlockInstructions blockInstructions = InstructionsMemory.getInstructionsMemoryInstance().getInstrucciones().get(this.PC);
+            BlockInstructions blockInstructions = InstructionsMemory.getInstructionsMemoryInstance().getInstructions().get(this.PC);
             this.IR = blockInstructions.getInstructions();
             this.executeInstruction(blockInstructions.getInstructions());
             count++;
             this.PC++;
         }
+        System.out.println("Thread " + this.getName() + "termino");
+        Clock.reduceCoreCount();
+        Clock.executeBarrier();
+        System.out.println("Cylces = " + Clock.getCycle());
+        printRegisters();
+    }
 
+    public void printRegisters() {
+        for (int i = 0; i < this.registers.size(); i++) {
+            System.out.println("R[" + i + "] = " + registers.get(i));
+        }
+    }
+
+    public void printThreadInfo() {
+
+    }
+
+    public Hilillo getHilillo() {
+        return this.hilillo;
+    }
+
+    public DataCache getDataCache() {
+        return this.dataCache;
+    }
+
+    public void setDataCache(DataCache dataCache) {
+        this.dataCache = dataCache;
+    }
+
+    public InstructionCache getInstructionCache() {
+        return instructionCache;
+    }
+
+    public void setInstructionCache(InstructionCache instructionCache) {
+        this.instructionCache = instructionCache;
     }
 }

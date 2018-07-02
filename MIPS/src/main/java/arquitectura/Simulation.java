@@ -4,7 +4,6 @@ import arquitectura.mips.*;
 import arquitectura.mips.Thread;
 import arquitectura.mips.cache.DataCache;
 import arquitectura.mips.cache.InstructionCache;
-import arquitectura.mips.memory.InstructionsMemory;
 import arquitectura.mips.memory.MainMemory;
 import arquitectura.mips.util.Util;
 
@@ -15,13 +14,12 @@ import java.util.Queue;
 import java.util.Random;
 
 /**
- * Created by alexiaborchgrevink on 6/23/18.
+ * Simulation deals with the logic of our simulation. Here we initialize our processors, shared memories and the caches and run the simulation.
  */
 public class Simulation {
 
     private Thread thread1;
     private Thread thread2;
-    private MasterThread masterThread;
     private Core core0;
     private Core core1;
     private DataCache dataCache0;
@@ -32,8 +30,8 @@ public class Simulation {
     private List<Hilillo> hillillosBackup;
 
     public Simulation() {
-        this.dataCache0 = new DataCache(8);
-        this.dataCache1 = new DataCache(8);
+        this.dataCache0 = new DataCache(8); //8 bloques
+        this.dataCache1 = new DataCache(8); // 8 bloques
         this.dataCache0.setRemoteCache(dataCache1);
         this.dataCache1.setRemoteCache(dataCache0);
 
@@ -42,10 +40,13 @@ public class Simulation {
         this.instructionCache0.setRemoteInstructionCache(instructionCache1);
         this.instructionCache1.setRemoteInstructionCache(instructionCache0);
 
+        MainMemory mainMemory = new MainMemory(24); //24 bloques de memoria
+
+
         this.hilillos = new LinkedList<Hilillo>();
 
-        this.core0 = new Core(8);
-        this.core1 = new Core(8);
+        this.core0 = new Core();
+        this.core1 = new Core();
 
     }
 
@@ -60,29 +61,24 @@ public class Simulation {
 
         this.thread1 = new Thread();
         this.thread2 = new Thread();
-        MasterThread masterThread = new MasterThread();
-        //asignar hilillo a hilo de manera random
         this.thread1.setInstructionCache(this.instructionCache0);
         this.thread2.setInstructionCache(this.instructionCache1);
         this.thread1.setDataCache(this.dataCache0);
         this.thread2.setDataCache(this.dataCache1);
-        // this.thread1 = new Thread(dataCache0,instructionCache0);
-        //this.thread2 = new Thread(dataCache1,instructionCache1);
 
         core0.setThread(this.thread1);
         core1.setThread(this.thread2);
 
         while (!contextQueue.isEmpty()) {
             asignHilillo(contextQueue);
+            //thread1.getHilillo().getContext().setRegisters(core0.getRegisters());
             this.thread1.run();
+            //thread2.getHilillo().getContext().setRegisters(core1.getRegisters());
             this.thread2.run();
         }
 
-
-        //masterThread.setThread1(this.thread1);
-        //masterThread.setThread2(this.thread2);
-        //masterThread.run();
-
+        printSharedMemory();
+        printDataCache();
 
     }
 
@@ -112,6 +108,39 @@ public class Simulation {
         }
     }
 
+    public void printSharedMemory() {
+        for (int i = 0; i < MainMemory.getMainMemoryInstance().getsize(); i++) {
+            System.out.println("Block: " + MainMemory.getMainMemoryInstance().getBlocksMemory().get(i).getNumBloque());
+            for (int j = 0; j < MainMemory.getMainMemoryInstance().getBlocksMemory().get(i).getWords().size(); j++) {
+                System.out.println("    Words: " + MainMemory.getMainMemoryInstance().getBlocksMemory().get(i).getWords().get(j));
+            }
+        }
+    }
+
+    public void printDataCache() {
+        System.out.println("Core 0 Data Cache:");
+        for (int i = 0; i < this.dataCache0.getCache().size(); i++) {
+            System.out.println("Position: " + i);
+            System.out.println("    Block: " + this.dataCache0.getCache().get(i).getEtiqueta());
+            System.out.println("    Status: " + this.dataCache0.getCache().get(i).getEstado());
+            System.out.print("     Words: ");
+            for (int j = 0; j < this.dataCache0.getCache().get(i).getPalabras().size(); j++) {
+                System.out.print(this.dataCache0.getCache().get(i).getPalabras().get(j) + " ");
+            }
+
+        }
+        System.out.println("Core 1 Data Cache:");
+        for (int i = 0; i < this.dataCache1.getCache().size(); i++) {
+            System.out.println("Position: " + i);
+            System.out.println("    Block: " + this.dataCache1.getCache().get(i).getEtiqueta());
+            System.out.println("    Status: " + this.dataCache1.getCache().get(i).getEstado());
+            System.out.print("    Words: ");
+            for (int j = 0; j < this.dataCache1.getCache().get(i).getPalabras().size(); j++) {
+                System.out.print(this.dataCache1.getCache().get(i).getPalabras().get(j) + " ");
+            }
+        }
+    }
+
     public Thread getThread1() {
         return thread1;
     }
@@ -127,15 +156,6 @@ public class Simulation {
     public void setThread2(Thread thread2) {
         this.thread2 = thread2;
     }
-
-    public MasterThread getMasterThread() {
-        return masterThread;
-    }
-
-    public void setMasterThread(MasterThread masterThread) {
-        this.masterThread = masterThread;
-    }
-
 
     public Core getCore0() {
         return core0;

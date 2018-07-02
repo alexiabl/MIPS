@@ -6,7 +6,7 @@ import arquitectura.mips.cache.InstructionCache;
 import java.util.ArrayList;
 
 /**
- * Created by alexiaborchgrevink on 6/4/18.
+ * Core that executes a thread
  */
 public class Core {
 
@@ -14,10 +14,14 @@ public class Core {
     //arrayblockingqueue
     private InstructionCache instructionCache;
     private Thread thread;
+    private ArrayList<Integer> registers = new ArrayList<Integer>(32);
 
 
-    public Core(int tamano) {
-
+    public Core() {
+        for (int i = 0; i < 32; i++) {
+            Integer value = new Integer(0);
+            this.registers.add(value);
+        }
     }
 
     public DataCache getDataCache() {
@@ -42,7 +46,14 @@ public class Core {
 
     public void setThread(Thread thread) {
         this.thread = thread;
+
     }
 
+    public ArrayList<Integer> getRegisters() {
+        return this.registers;
+    }
 
+    public void setRegisters(ArrayList<Integer> registers) {
+        this.registers = registers;
+    }
 }

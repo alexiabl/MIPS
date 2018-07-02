@@ -5,7 +5,7 @@ import java.util.concurrent.Semaphore;
 import java.util.concurrent.locks.Lock;
 
 /**
- * Created by alexiaborchgrevink on 6/4/18.
+ * Cache of Data in our processor
  */
 public class DataCache {
 
@@ -19,6 +19,7 @@ public class DataCache {
         this.size = size;
         for (int i = 0; i < this.size; i++) {
             BlockCache bloque = new BlockCache();
+            bloque.setEstado('I');
             this.cache.add(bloque);
         }
         //this.dataCacheLock.unlock();
