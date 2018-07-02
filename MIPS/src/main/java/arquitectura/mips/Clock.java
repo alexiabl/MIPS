@@ -74,7 +74,7 @@ public class Clock {
             // Increase counter.
             mutex.acquire();
             // Should the counter be less than our core count, we need to wait in our barrier.
-            if (counter < coreCount && coreCount > 1) {
+            if (counter + 1 < coreCount && coreCount > 1) {
                 counter++;
                 mutex.release();
                 // Acquire our barrier and wait for the last core to finish.

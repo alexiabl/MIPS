@@ -172,17 +172,18 @@ public class Thread extends java.lang.Thread { //corre el hilillo
 
 
     public void SW() {
-        int numeroBloque = getNumeroDeBloque(IR.get(1), 16);
-        int numeroPalabra = getNumeroDePalabra(IR.get(1), 16, 4);
+        int numeroBloque = getNumeroDeBloque(IR.get(1), 8);
+        int numeroPalabra = getNumeroDePalabra(IR.get(1), 8, 4);
         int posicionCache = getPosicionCache(numeroBloque, dataCache.getSize());
 
         DataCache otherCache = dataCache.getRemoteCache(); //asi se obtiene la otra cache
 
         if (this.dataCache.dataCacheLock.tryAcquire()) {
+            //for de ciclos
             if (dataCache.getCache().get(posicionCache).getEtiqueta() == numeroBloque) {
                 if (dataCache.getCache().get(posicionCache).getEstado() == 'M') {
                     dataCache.getCache().get(posicionCache).setPalabra(numeroPalabra, registers.get(IR.get(2)));
-                    this.dataCache.dataCacheLock.release();//será??????
+                    this.dataCache.dataCacheLock.release(); //
                     //AVANZA EL CICLO DEL RELOJ!!!
                 } else if (dataCache.getCache().get(posicionCache).getEstado() == 'C') {
                     BusData.getBusDataInsance().lock.tryAcquire();
@@ -264,12 +265,12 @@ public class Thread extends java.lang.Thread { //corre el hilillo
         } else {
             //AUMENTAR CICLO DE RELOJ!!!
         }
-//        Clock.executeBarrier();
+        Clock.executeBarrier();
     }
 
     public void executeInstruction(ArrayList<Integer> instruction) { //despues de cada instruccion se le quita quantum
         switch (instruction.get(0)) {
-            case 8: //DADDI
+            case 8:
                 DADDI();
                 this.hilillo.removeQuantum();
                 break;
@@ -324,25 +325,25 @@ public class Thread extends java.lang.Thread { //corre el hilillo
     public void DADDI() {
         int resultado = this.registers.get(IR.get(1)) + IR.get(3);
         this.registers.set(IR.get(2), resultado);
-        //Clock.executeBarrier();
+        Clock.executeBarrier();
     }
 
     public void DADD() {
         int resultado = this.registers.get(IR.get(1)) + this.registers.get(IR.get(2));
         this.registers.set(IR.get(3), resultado);
-        //Clock.executeBarrier();
+        Clock.executeBarrier();
     }
 
     public void DSUB() {
         int resultado = registers.get(IR.get(1)) - registers.get(IR.get(2));
         registers.set(IR.get(3), resultado);
-        //Clock.executeBarrier();
+        Clock.executeBarrier();
     }
 
     public void DMUL() {
         int resultado = registers.get(IR.get(1)) * registers.get(IR.get(2));
         registers.set(IR.get(3), resultado);
-        //Clock.executeBarrier();
+        Clock.executeBarrier();
     }
 
     public void DDIV() {
@@ -352,33 +353,33 @@ public class Thread extends java.lang.Thread { //corre el hilillo
         } else {
             System.out.println("Advertencia! Está dividiendo entre 0.");
         }
-        //Clock.executeBarrier();
+        Clock.executeBarrier();
 
     }
 
     public void BEQZ() {
         if (registers.get(IR.get(1)) == 0) {
             PC = PC + 4 * IR.get(3);
-            //Clock.executeBarrier();
+            Clock.executeBarrier();
         }
     }
 
     public void BNEZ() {
         if (registers.get(IR.get(1)) != 0) {
             PC = PC + 4 * IR.get(3);
-            // Clock.executeBarrier();
+            Clock.executeBarrier();
         }
     }
 
     public void JAL() {
         registers.set(31, PC);
         PC = PC + IR.get(3);
-        //Clock.executeBarrier();
+        Clock.executeBarrier();
     }
 
     public void JR() {
         PC = registers.get(IR.get(1));
-        //Clock.executeBarrier();
+        Clock.executeBarrier();
     }
 
     public void FIN() {
@@ -388,7 +389,7 @@ public class Thread extends java.lang.Thread { //corre el hilillo
 
     @Override
     public void run() {
-        System.out.println("Thread " + this.getName() + " running");
+        System.out.println(this.getName() + " running");
         int endIR = this.hilillo.getContext().getPCfinal();
         int count = this.hilillo.getContext().getPCinitial();
         while (count <= endIR) {
@@ -398,11 +399,11 @@ public class Thread extends java.lang.Thread { //corre el hilillo
             count++;
             this.PC++;
         }
-        System.out.println("Thread " + this.getName() + " finalized");
-        //Clock.reduceCoreCount();
-        //Clock.executeBarrier();
+        System.out.println(this.getName() + " finalized");
+        printRegisters();
+        Clock.reduceCoreCount();
+        Clock.executeBarrier();
         System.out.println("Cycles = " + Clock.getCycle());
-        //printRegisters();
     }
 
     public void printRegisters() {
