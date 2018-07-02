@@ -36,4 +36,10 @@ public class MainMemory {
     public void setTamano(int tamano) {
         this.tamano = tamano;
     }
+
+    public void setDatosBloque(int indice, ArrayList<Integer> palabras){
+        BlockData temp= new BlockData();
+        temp.setWords(palabras);
+        datos.set(indice, temp);
+    }
 }
