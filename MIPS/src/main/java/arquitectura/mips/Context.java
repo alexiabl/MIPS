@@ -19,7 +19,9 @@ public class Context {
     public Context(int PCinitial) {
         this.id = UUID.randomUUID();
         this.registers = new ArrayList<Integer>(32);
-
+        for (int i = 0; i < 32; i++) {
+            this.registers.add(0);
+        }
         this.PCinitial = PCinitial;
     }
 

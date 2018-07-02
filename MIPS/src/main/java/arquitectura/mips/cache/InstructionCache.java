@@ -26,7 +26,6 @@ public class InstructionCache {
         }
     }
 
-
     public InstructionCache() {
         this.instrucciones = new ArrayList<BlockInstructions>();
     }

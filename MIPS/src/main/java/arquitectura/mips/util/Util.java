@@ -19,11 +19,6 @@ public class Util {
     private InstructionsMemory instructionsMemory;
     private List<String> archivos;
     private Queue<Context> contextQueue;
-    private Hilillo hilillo1;
-    private Hilillo hilillo2;
-    private Hilillo hilillo3;
-    private Hilillo hilillo4;
-    private Hilillo hilillo5;
     private List<Hilillo> hilillos;
 
 
@@ -51,11 +46,10 @@ public class Util {
         this.hilillos = new LinkedList<Hilillo>();
     }
 
-    public void readFiles() { //insertar en memoria principal
-        //cada linea por 4 que son las instucciones
+    //Reads Hilillos files and inserts into our Instructions Memory while creating the Context queue
+    public void readFiles() {
         int blockCounter = 0;
         int currentPosition = 0;
-        int finalPosition = 0;
         for (int i = 0; i < this.archivos.size(); i++) {
             try {
                 FileReader fileReader = new FileReader(this.archivos.get(i));

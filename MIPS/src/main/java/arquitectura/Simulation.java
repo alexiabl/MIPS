@@ -4,7 +4,6 @@ import arquitectura.mips.*;
 import arquitectura.mips.Thread;
 import arquitectura.mips.cache.DataCache;
 import arquitectura.mips.cache.InstructionCache;
-import arquitectura.mips.memory.InstructionsMemory;
 import arquitectura.mips.memory.MainMemory;
 import arquitectura.mips.util.Util;
 
@@ -72,12 +71,14 @@ public class Simulation {
 
         while (!contextQueue.isEmpty()) {
             asignHilillo(contextQueue);
-            thread1.getHilillo().getContext().setRegisters(core0.getRegisters());
+            //thread1.getHilillo().getContext().setRegisters(core0.getRegisters());
             this.thread1.run();
-            thread2.getHilillo().getContext().setRegisters(core1.getRegisters());
+            //thread2.getHilillo().getContext().setRegisters(core1.getRegisters());
             this.thread2.run();
         }
 
+        printSharedMemory();
+        printDataCache();
 
     }
 
@@ -104,6 +105,39 @@ public class Simulation {
             this.hilillos.remove(hilillo2);
             this.hilillos.remove(hilillo1);
 
+        }
+    }
+
+    public void printSharedMemory() {
+        for (int i = 0; i < MainMemory.getMainMemoryInstance().getsize(); i++) {
+            System.out.println("Block: " + MainMemory.getMainMemoryInstance().getBlocksMemory().get(i).getNumBloque());
+            for (int j = 0; j < MainMemory.getMainMemoryInstance().getBlocksMemory().get(i).getWords().size(); j++) {
+                System.out.println("    Words: " + MainMemory.getMainMemoryInstance().getBlocksMemory().get(i).getWords().get(j));
+            }
+        }
+    }
+
+    public void printDataCache() {
+        System.out.println("Core 0 Data Cache:");
+        for (int i = 0; i < this.dataCache0.getCache().size(); i++) {
+            System.out.println("Position: " + i);
+            System.out.println("    Block: " + this.dataCache0.getCache().get(i).getEtiqueta());
+            System.out.println("    Status: " + this.dataCache0.getCache().get(i).getEstado());
+            System.out.print("     Words: ");
+            for (int j = 0; j < this.dataCache0.getCache().get(i).getPalabras().size(); j++) {
+                System.out.print(this.dataCache0.getCache().get(i).getPalabras().get(j) + " ");
+            }
+
+        }
+        System.out.println("Core 1 Data Cache:");
+        for (int i = 0; i < this.dataCache1.getCache().size(); i++) {
+            System.out.println("Position: " + i);
+            System.out.println("    Block: " + this.dataCache1.getCache().get(i).getEtiqueta());
+            System.out.println("    Status: " + this.dataCache1.getCache().get(i).getEstado());
+            System.out.print("    Words: ");
+            for (int j = 0; j < this.dataCache1.getCache().get(i).getPalabras().size(); j++) {
+                System.out.print(this.dataCache1.getCache().get(i).getPalabras().get(j) + " ");
+            }
         }
     }
 

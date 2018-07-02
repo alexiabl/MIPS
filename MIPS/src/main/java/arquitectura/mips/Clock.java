@@ -17,10 +17,9 @@ public class Clock {
     private static final Semaphore barrier = new Semaphore(1);
     /// Number if cycles that occurred since the beginning of our simulation.
     private static int cycle = 0;
-    /// Instance of our clock.
+
     private static Clock instance = null;
 
-    /// Private constructor. Singleton patterns must always have one.
     private Clock() {
     }
 
@@ -68,7 +67,7 @@ public class Clock {
     }
 
     /**
-     * Executes our barrier, so that no core can go on, if we have other running cores.
+     * Executes our barrier, so that no thread can go on, if we have other running threads.
      */
     public static void executeBarrier() {
         try {

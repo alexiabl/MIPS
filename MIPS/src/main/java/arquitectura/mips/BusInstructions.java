@@ -11,7 +11,6 @@ public class BusInstructions {
     public static BusInstructions busInstructions;
 
     public BusInstructions() {
-
     }
 
     public static BusInstructions getBusInstructionsInstance() {

@@ -50,7 +50,7 @@ public class Core {
     }
 
     public ArrayList<Integer> getRegisters() {
-        return registers;
+        return this.registers;
     }
 
     public void setRegisters(ArrayList<Integer> registers) {

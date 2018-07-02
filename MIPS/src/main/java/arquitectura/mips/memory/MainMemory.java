@@ -38,10 +38,6 @@ public class MainMemory {
         return mainMemory;
     }
 
-    public MainMemory() {
-        this.datos = new ArrayList<BlockData>();
-    }
-
     public int getsize() {
         return size;
     }
@@ -55,4 +51,9 @@ public class MainMemory {
         temp.setWords(palabras);
         datos.set(indice, temp);
     }
+
+    public ArrayList<BlockData> getBlocksMemory() {
+        return this.datos;
+    }
+
 }

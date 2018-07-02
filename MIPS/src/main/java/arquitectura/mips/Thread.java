@@ -13,7 +13,7 @@ import java.util.Collections;
 /**
  * Core processor that executes instructions
  */
-public class Thread implements Runnable { //corre el hilillo
+public class Thread extends java.lang.Thread { //corre el hilillo
 
     private ArrayList<Integer> IR;
     private ArrayList<Integer> registers = new ArrayList<Integer>(32);
@@ -346,25 +346,25 @@ public class Thread implements Runnable { //corre el hilillo
     public void DADDI() {
         int resultado = this.registers.get(IR.get(1)) + IR.get(3);
         this.registers.set(IR.get(2), resultado);
-        Clock.executeBarrier();
+        //Clock.executeBarrier();
     }
 
     public void DADD() {
         int resultado = this.registers.get(IR.get(1)) + this.registers.get(IR.get(2));
         this.registers.set(IR.get(3), resultado);
-        Clock.executeBarrier();
+        //Clock.executeBarrier();
     }
 
     public void DSUB() {
         int resultado = registers.get(IR.get(1)) - registers.get(IR.get(2));
         registers.set(IR.get(3), resultado);
-        Clock.executeBarrier();
+        //Clock.executeBarrier();
     }
 
     public void DMUL() {
         int resultado = registers.get(IR.get(1)) * registers.get(IR.get(2));
         registers.set(IR.get(3), resultado);
-        Clock.executeBarrier();
+        //Clock.executeBarrier();
     }
 
     public void DDIV() {
@@ -374,52 +374,66 @@ public class Thread implements Runnable { //corre el hilillo
         } else {
             System.out.println("Advertencia! Está dividiendo entre 0.");
         }
-        Clock.executeBarrier();
+        //Clock.executeBarrier();
 
     }
 
     public void BEQZ() {
         if (registers.get(IR.get(1)) == 0) {
             PC = PC + 4 * IR.get(3);
-            Clock.executeBarrier();
+            //Clock.executeBarrier();
         }
     }
 
     public void BNEZ() {
         if (registers.get(IR.get(1)) != 0) {
             PC = PC + 4 * IR.get(3);
-            Clock.executeBarrier();
+            //Clock.executeBarrier();
         }
     }
 
     public void JAL() {
         registers.set(31, PC);
         PC = PC + IR.get(3);
-        Clock.executeBarrier();
+        //Clock.executeBarrier();
     }
 
     public void JR() {
         PC = registers.get(IR.get(1));
-        Clock.executeBarrier();
+        //Clock.executeBarrier();
     }
 
     public void FIN() {
-        System.out.println("Thread finished ");
-        Clock.executeBarrier();
-
+        System.out.println("Thread finished");
+        printRegisters();
     }
 
     @Override
     public void run() {
+        System.out.println("Thread " + this.getName() + "corriendo");
         int endIR = this.hilillo.getContext().getPCfinal();
         int count = this.hilillo.getContext().getPCinitial();
         while (count <= endIR) {
-            BlockInstructions blockInstructions = InstructionsMemory.getInstructionsMemoryInstance().getInstrucciones().get(this.PC);
+            BlockInstructions blockInstructions = InstructionsMemory.getInstructionsMemoryInstance().getInstructions().get(this.PC);
             this.IR = blockInstructions.getInstructions();
             this.executeInstruction(blockInstructions.getInstructions());
             count++;
             this.PC++;
         }
+        System.out.println("Thread " + this.getName() + "termino");
+        Clock.reduceCoreCount();
+        Clock.executeBarrier();
+        System.out.println("Cylces = " + Clock.getCycle());
+        printRegisters();
+    }
+
+    public void printRegisters() {
+        for (int i = 0; i < this.registers.size(); i++) {
+            System.out.println("R[" + i + "] = " + registers.get(i));
+        }
+    }
+
+    public void printThreadInfo() {
 
     }
 
