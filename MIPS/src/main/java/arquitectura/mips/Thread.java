@@ -224,11 +224,12 @@ public class Thread implements Runnable { //corre el hilillo
 
                                 BusData.getBusDataInsance().lock.release();//creo que asi se hace
                                 dataCache.setBloqueCache(posicionCache , MainMemory.getMainMemoryInstance().getDatos().get(numeroBloque).getWords());
+                                this.dataCache.getCache().get(posicionCache).setEstado('C');
                                 //AVANZA EL CICLO DEL RELOJ!!!
 
                             } else if (otherCache.getCache().get(posicionCache).getEstado() == 'M') {
                                 MainMemory.getMainMemoryInstance().setDatosBloque(IR.get(1), otherCache.getCache().get(posicionCache).getPalabras());
-                                otherCache.setBloqueCache(posicionCache , MainMemory.getMainMemoryInstance().getDatos().get(numeroBloque).getWords());
+                                dataCache.setBloqueCache(posicionCache , MainMemory.getMainMemoryInstance().getDatos().get(numeroBloque).getWords());
                                 otherCache.getCache().get(posicionCache).setEstado('I');
                                 otherCache.dataCacheLock.release();
                                 BusData.getBusDataInsance().lock.release();//creo que asi se hace
@@ -245,7 +246,7 @@ public class Thread implements Runnable { //corre el hilillo
                     if (otherCache.dataCacheLock.tryAcquire()) {
                         if (otherCache.getCache().get(posicionCache).getEstado() == 'M') {
                             MainMemory.getMainMemoryInstance().setDatosBloque(IR.get(1), otherCache.getCache().get(posicionCache).getPalabras());
-                            otherCache.setBloqueCache(posicionCache , MainMemory.getMainMemoryInstance().getDatos().get(numeroBloque).getWords());
+                            dataCache.setBloqueCache(posicionCache , MainMemory.getMainMemoryInstance().getDatos().get(numeroBloque).getWords());
                             this.getDataCache().getCache().get(posicionCache).setEstado('I');
                             BusData.getBusDataInsance().lock.release();//creo que asi se hace
                             this.dataCache.dataCacheLock.release();//será??????
@@ -266,6 +267,7 @@ public class Thread implements Runnable { //corre el hilillo
                         }
                     } else {
                         dataCache.setBloqueCache(posicionCache , MainMemory.getMainMemoryInstance().getDatos().get(numeroBloque).getWords());
+                        dataCache.getCache().get(posicionCache).setEstado('C');
                         otherCache.dataCacheLock.release();
                         BusData.getBusDataInsance().lock.release();//creo que asi se hace
                         //AVANZA EL RELOJ!!!
