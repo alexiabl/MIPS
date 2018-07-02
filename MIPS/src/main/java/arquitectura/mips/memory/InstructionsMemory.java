@@ -15,6 +15,7 @@ public class InstructionsMemory {
 
     public InstructionsMemory() {
         instrucciones = new ArrayList<BlockInstructions>();
+        instructionsMemory = this;
     }
 
     public ArrayList<BlockInstructions> getInstrucciones() {

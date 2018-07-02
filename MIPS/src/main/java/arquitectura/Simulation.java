@@ -32,8 +32,8 @@ public class Simulation {
     private List<Hilillo> hillillosBackup;
 
     public Simulation() {
-        this.dataCache0 = new DataCache(8);
-        this.dataCache1 = new DataCache(8);
+        this.dataCache0 = new DataCache(8); //8 bloques
+        this.dataCache1 = new DataCache(8); // 8 bloques
         this.dataCache0.setRemoteCache(dataCache1);
         this.dataCache1.setRemoteCache(dataCache0);
 
@@ -42,10 +42,13 @@ public class Simulation {
         this.instructionCache0.setRemoteInstructionCache(instructionCache1);
         this.instructionCache1.setRemoteInstructionCache(instructionCache0);
 
+        MainMemory mainMemory = new MainMemory(24); //24 bloques de memoria
+
+
         this.hilillos = new LinkedList<Hilillo>();
 
-        this.core0 = new Core(8);
-        this.core1 = new Core(8);
+        this.core0 = new Core();
+        this.core1 = new Core();
 
     }
 
@@ -74,7 +77,9 @@ public class Simulation {
 
         while (!contextQueue.isEmpty()) {
             asignHilillo(contextQueue);
+            thread1.getHilillo().getContext().setRegisters(core0.getRegisters());
             this.thread1.run();
+            thread2.getHilillo().getContext().setRegisters(core1.getRegisters());
             this.thread2.run();
         }
 

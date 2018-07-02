@@ -10,7 +10,7 @@ public class BlockData extends Block {
     private ArrayList<Integer> words;
 
     public BlockData() {
-        this.words = new ArrayList<Integer>();
+        this.words = new ArrayList<Integer>(4);
     }
 
     public ArrayList<Integer> getWords() {

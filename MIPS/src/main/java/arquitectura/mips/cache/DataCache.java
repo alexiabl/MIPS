@@ -19,6 +19,7 @@ public class DataCache {
         this.size = size;
         for (int i = 0; i < this.size; i++) {
             BlockCache bloque = new BlockCache();
+            bloque.setEstado('I');
             this.cache.add(bloque);
         }
         //this.dataCacheLock.unlock();

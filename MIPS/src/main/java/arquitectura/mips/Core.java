@@ -14,10 +14,14 @@ public class Core {
     //arrayblockingqueue
     private InstructionCache instructionCache;
     private Thread thread;
+    private ArrayList<Integer> registers = new ArrayList<Integer>(32);
 
 
-    public Core(int tamano) {
-
+    public Core() {
+        for (int i = 0; i < 32; i++) {
+            Integer value = new Integer(0);
+            this.registers.add(value);
+        }
     }
 
     public DataCache getDataCache() {
@@ -41,8 +45,16 @@ public class Core {
     }
 
     public void setThread(Thread thread) {
+        //thread.getHilillo().getContext().setRegisters(this.registers);
         this.thread = thread;
+
     }
 
+    public ArrayList<Integer> getRegisters() {
+        return registers;
+    }
 
+    public void setRegisters(ArrayList<Integer> registers) {
+        this.registers = registers;
+    }
 }

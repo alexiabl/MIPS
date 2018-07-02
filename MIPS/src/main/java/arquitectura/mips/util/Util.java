@@ -30,11 +30,18 @@ public class Util {
     public Util() throws IOException {
         this.instructionsMemory = new InstructionsMemory();
         this.archivos = new LinkedList<String>();
-        String file1 = "/Users/alexiaborchgrevink/Desktop/Arquitectura/Proyecto-MIPS/MIPS/MIPS/src/main/java/arquitectura/mips/util/1.txt";
-        String file2 = "/Users/alexiaborchgrevink/Desktop/Arquitectura/Proyecto-MIPS/MIPS/MIPS/src/main/java/arquitectura/mips/util/2.txt";
-        String file3 = "/Users/alexiaborchgrevink/Desktop/Arquitectura/Proyecto-MIPS/MIPS/MIPS/src/main/java/arquitectura/mips/util/3.txt";
-        String file4 = "/Users/alexiaborchgrevink/Desktop/Arquitectura/Proyecto-MIPS/MIPS/MIPS/src/main/java/arquitectura/mips/util/4.txt";
-        String file5 = "/Users/alexiaborchgrevink/Desktop/Arquitectura/Proyecto-MIPS/MIPS/MIPS/src/main/java/arquitectura/mips/util/2.txt";
+
+        File file = new File("src/main/java/arquitectura/mips/util/1.txt");
+        String file1 = file.getAbsolutePath();
+        file = new File("src/main/java/arquitectura/mips/util/2.txt");
+        String file2 = file.getAbsolutePath();
+        file = new File("src/main/java/arquitectura/mips/util/3.txt");
+        String file3 = file.getAbsolutePath();
+        file = new File("src/main/java/arquitectura/mips/util/4.txt");
+        String file4 = file.getAbsolutePath();
+        file = new File("src/main/java/arquitectura/mips/util/5.txt");
+        String file5 = file.getAbsolutePath();
+
         this.archivos.add(file1);
         this.archivos.add(file2);
         this.archivos.add(file3);
