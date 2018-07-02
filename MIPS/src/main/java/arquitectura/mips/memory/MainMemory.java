@@ -42,4 +42,8 @@ public class MainMemory {
         temp.setWords(palabras);
         datos.set(indice, temp);
     }
+
+    public ArrayList<BlockData> getDatos() {
+        return datos;
+    }
 }
