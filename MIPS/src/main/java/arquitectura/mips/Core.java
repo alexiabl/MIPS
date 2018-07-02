@@ -11,7 +11,6 @@ import java.util.ArrayList;
 public class Core {
 
     private DataCache dataCache;
-    //arrayblockingqueue
     private InstructionCache instructionCache;
     private Thread thread;
     private ArrayList<Integer> registers = new ArrayList<Integer>(32);
