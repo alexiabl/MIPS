@@ -28,6 +28,7 @@ public class Simulation {
     private InstructionCache instructionCache1;
     private List<Hilillo> hilillos;
     private List<Hilillo> hillillosBackup;
+    private MainMemory mainMemory;
 
     public Simulation() {
         this.dataCache0 = new DataCache(8); //8 bloques
@@ -40,7 +41,7 @@ public class Simulation {
         this.instructionCache0.setRemoteInstructionCache(instructionCache1);
         this.instructionCache1.setRemoteInstructionCache(instructionCache0);
 
-        MainMemory mainMemory = new MainMemory(24); //24 bloques de memoria
+        this.mainMemory = new MainMemory(24); //24 bloques de memoria
 
 
         this.hilillos = new LinkedList<Hilillo>();
@@ -75,7 +76,15 @@ public class Simulation {
             this.thread1.run();
             //thread2.getHilillo().getContext().setRegisters(core1.getRegisters());
             this.thread2.run();
+            for (int i = 0; i < this.thread1.getHilillo().getContext().getRegisters().size(); i++) {
+                System.out.println("R[" + i + "] = " + this.thread1.getHilillo().getContext().getRegisters().get(i));
+            }
+            for (int i = 0; i < this.thread2.getHilillo().getContext().getRegisters().size(); i++) {
+                System.out.println("R[" + i + "] = " + this.thread2.getHilillo().getContext().getRegisters().get(i));
+            }
+
         }
+
 
         printSharedMemory();
         printDataCache();
@@ -109,6 +118,7 @@ public class Simulation {
     }
 
     public void printSharedMemory() {
+        System.out.println("Shared memory:");
         for (int i = 0; i < MainMemory.getMainMemoryInstance().getsize(); i++) {
             System.out.println("Block: " + MainMemory.getMainMemoryInstance().getBlocksMemory().get(i).getNumBloque());
             for (int j = 0; j < MainMemory.getMainMemoryInstance().getBlocksMemory().get(i).getWords().size(); j++) {

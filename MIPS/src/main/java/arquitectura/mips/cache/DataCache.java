@@ -22,7 +22,7 @@ public class DataCache {
             bloque.setEstado('I');
             this.cache.add(bloque);
         }
-        //this.dataCacheLock.unlock();
+        this.dataCacheLock = new Semaphore(1);
     }
 
 

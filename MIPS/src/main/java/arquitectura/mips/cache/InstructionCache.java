@@ -24,6 +24,7 @@ public class InstructionCache {
             BlockInstructions bloque = new BlockInstructions();
             this.instrucciones.add(bloque);
         }
+        this.instructionCacheLock = new Semaphore(1);
     }
 
     public InstructionCache() {

@@ -130,7 +130,7 @@ public class Thread extends java.lang.Thread { //corre el hilillo
         } else {
             //NO SE BLOQUEO LA POSICION... AUMENTAR CICLO DE RELOJ
         }
-        Clock.executeBarrier();
+        //    Clock.executeBarrier();
 
     }
 
@@ -187,7 +187,7 @@ public class Thread extends java.lang.Thread { //corre el hilillo
                 } else if (dataCache.getCache().get(posicionCache).getEstado() == 'C') {
                     BusData.getBusDataInsance().lock.tryAcquire();
                     if (otherCache.dataCacheLock.tryAcquire()) { //se bloquea la otra cache
-                        if(otherCache.getCache().get(posicionCache).getEtiqueta() == numeroBloque && otherCache.getCache().get(posicionCache).getEstado() == 'C') {
+                        if (otherCache.getCache().get(posicionCache).getEtiqueta() == numeroBloque && otherCache.getCache().get(posicionCache).getEstado() == 'C') {
                             otherCache.getCache().get(posicionCache).setEstado('I');
                             this.dataCache.getCache().get(posicionCache).setEstado('M');
                             MainMemory.getMainMemoryInstance().setDatosBloque(IR.get(1), this.dataCache.getCache().get(posicionCache).getPalabras());
@@ -198,20 +198,20 @@ public class Thread extends java.lang.Thread { //corre el hilillo
                     }
                 } else if (dataCache.getCache().get(posicionCache).getEstado() == 'I') {
                     BusData.getBusDataInsance().lock.tryAcquire();
-                    if(otherCache.dataCacheLock.tryAcquire()) {
+                    if (otherCache.dataCacheLock.tryAcquire()) {
                         if (otherCache.getCache().get(posicionCache).getEtiqueta() == numeroBloque) {
                             if (otherCache.getCache().get(posicionCache).getEstado() == 'C') {
                                 otherCache.getCache().get(posicionCache).setEstado('I');
                                 otherCache.dataCacheLock.release();
 
                                 BusData.getBusDataInsance().lock.release();//creo que asi se hace
-                                dataCache.setBloqueCache(posicionCache , MainMemory.getMainMemoryInstance().getDatos().get(numeroBloque).getWords());
+                                dataCache.setBloqueCache(posicionCache, MainMemory.getMainMemoryInstance().getBlocksMemory().get(numeroBloque).getWords());
                                 this.dataCache.getCache().get(posicionCache).setEstado('C');
                                 //AVANZA EL CICLO DEL RELOJ!!!
 
                             } else if (otherCache.getCache().get(posicionCache).getEstado() == 'M') {
                                 MainMemory.getMainMemoryInstance().setDatosBloque(IR.get(1), otherCache.getCache().get(posicionCache).getPalabras());
-                                dataCache.setBloqueCache(posicionCache , MainMemory.getMainMemoryInstance().getDatos().get(numeroBloque).getWords());
+                                dataCache.setBloqueCache(posicionCache, MainMemory.getMainMemoryInstance().getBlocksMemory().get(numeroBloque).getWords());
                                 otherCache.getCache().get(posicionCache).setEstado('I');
                                 otherCache.dataCacheLock.release();
                                 BusData.getBusDataInsance().lock.release();//creo que asi se hace
@@ -228,7 +228,7 @@ public class Thread extends java.lang.Thread { //corre el hilillo
                     if (otherCache.dataCacheLock.tryAcquire()) {
                         if (otherCache.getCache().get(posicionCache).getEstado() == 'M') {
                             MainMemory.getMainMemoryInstance().setDatosBloque(IR.get(1), otherCache.getCache().get(posicionCache).getPalabras());
-                            dataCache.setBloqueCache(posicionCache , MainMemory.getMainMemoryInstance().getDatos().get(numeroBloque).getWords());
+                            dataCache.setBloqueCache(posicionCache, MainMemory.getMainMemoryInstance().getBlocksMemory().get(numeroBloque).getWords());
                             this.getDataCache().getCache().get(posicionCache).setEstado('I');
                             BusData.getBusDataInsance().lock.release();//creo que asi se hace
                             this.dataCache.dataCacheLock.release();//será??????
@@ -239,16 +239,16 @@ public class Thread extends java.lang.Thread { //corre el hilillo
                             //AVANZA EL RELOJ!!!
                         } else if (otherCache.getCache().get(posicionCache).getEstado() == 'C') {
                             otherCache.getCache().get(posicionCache).setEstado('I');
-                            MainMemory.getMainMemoryInstance().getDatos().get(numeroBloque);
+                            MainMemory.getMainMemoryInstance().getBlocksMemory().get(numeroBloque);
                             otherCache.dataCacheLock.release();
                             //AVANZA EL RELOJ!!!
                         } else if (otherCache.getCache().get(posicionCache).getEstado() == 'I') {
-                            MainMemory.getMainMemoryInstance().getDatos().get(numeroBloque);
+                            MainMemory.getMainMemoryInstance().getBlocksMemory().get(numeroBloque);
                             otherCache.dataCacheLock.release();
                             //AVANZA EL RELOJ!!!
                         }
                     } else {
-                        dataCache.setBloqueCache(posicionCache , MainMemory.getMainMemoryInstance().getDatos().get(numeroBloque).getWords());
+                        dataCache.setBloqueCache(posicionCache, MainMemory.getMainMemoryInstance().getBlocksMemory().get(numeroBloque).getWords());
                         dataCache.getCache().get(posicionCache).setEstado('C');
                         otherCache.dataCacheLock.release();
                         BusData.getBusDataInsance().lock.release();//creo que asi se hace
@@ -264,7 +264,7 @@ public class Thread extends java.lang.Thread { //corre el hilillo
         } else {
             //AUMENTAR CICLO DE RELOJ!!!
         }
-        Clock.executeBarrier();
+//        Clock.executeBarrier();
     }
 
     public void executeInstruction(ArrayList<Integer> instruction) { //despues de cada instruccion se le quita quantum
@@ -306,11 +306,11 @@ public class Thread extends java.lang.Thread { //corre el hilillo
                 this.hilillo.removeQuantum();
                 break;
             case 35:
-                //LW
+                LW();
                 this.hilillo.removeQuantum();
                 break;
             case 43:
-                //SW
+                SW();
                 this.hilillo.removeQuantum();
                 break;
             case 63:
@@ -366,7 +366,7 @@ public class Thread extends java.lang.Thread { //corre el hilillo
     public void BNEZ() {
         if (registers.get(IR.get(1)) != 0) {
             PC = PC + 4 * IR.get(3);
-            //Clock.executeBarrier();
+            // Clock.executeBarrier();
         }
     }
 
@@ -388,7 +388,7 @@ public class Thread extends java.lang.Thread { //corre el hilillo
 
     @Override
     public void run() {
-        System.out.println("Thread " + this.getName() + "corriendo");
+        System.out.println("Thread " + this.getName() + " running");
         int endIR = this.hilillo.getContext().getPCfinal();
         int count = this.hilillo.getContext().getPCinitial();
         while (count <= endIR) {
@@ -398,11 +398,11 @@ public class Thread extends java.lang.Thread { //corre el hilillo
             count++;
             this.PC++;
         }
-        System.out.println("Thread " + this.getName() + "termino");
-        Clock.reduceCoreCount();
-        Clock.executeBarrier();
-        System.out.println("Cylces = " + Clock.getCycle());
-        printRegisters();
+        System.out.println("Thread " + this.getName() + " finalized");
+        //Clock.reduceCoreCount();
+        //Clock.executeBarrier();
+        System.out.println("Cycles = " + Clock.getCycle());
+        //printRegisters();
     }
 
     public void printRegisters() {
