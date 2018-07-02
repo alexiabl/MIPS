@@ -48,4 +48,11 @@ public class DataCache {
     public void setRemoteCache(DataCache remoteCache) {
         this.remoteCache = remoteCache;
     }
+
+    public void setBloqueCache(int posicion, ArrayList<Integer> palabras) {
+        BlockCache bloque = new BlockCache();
+        bloque.setPalabras(palabras);
+        bloque.setEtiqueta(posicion);
+        cache.set(posicion % this.size, bloque);
+    }
 }
