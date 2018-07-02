@@ -5,6 +5,7 @@ import arquitectura.mips.cache.DataCache;
 import arquitectura.mips.cache.InstructionCache;
 import arquitectura.mips.memory.InstructionsMemory;
 import arquitectura.mips.memory.MainMemory;
+import sun.applet.Main;
 
 import javax.xml.crypto.Data;
 import java.util.ArrayList;
@@ -207,7 +208,7 @@ public class Thread implements Runnable { //corre el hilillo
                         if(otherCache.getCache().get(posicionCache).getEtiqueta() == numeroBloque && otherCache.getCache().get(posicionCache).getEstado() == 'C') {
                             otherCache.getCache().get(posicionCache).setEstado('I');
                             this.dataCache.getCache().get(posicionCache).setEstado('M');
-                            //SE ESCRIBE EN MEMORIA
+                            MainMemory.getMainMemoryInstance().setDatosBloque(IR.get(1), this.dataCache.getCache().get(posicionCache).getPalabras());
                             this.dataCache.dataCacheLock.release();//será??????
                             //AVANZA EL CICLO DEL RELOJ!!!
                         }
@@ -222,12 +223,12 @@ public class Thread implements Runnable { //corre el hilillo
                                 otherCache.dataCacheLock.release();
 
                                 BusData.getBusDataInsance().lock.release();//creo que asi se hace
-                                //EL BLOQUE SE SUBE DE MEMORIA!!!
+                                dataCache.setBloqueCache(posicionCache , MainMemory.getMainMemoryInstance().getDatos().get(numeroBloque).getWords());
                                 //AVANZA EL CICLO DEL RELOJ!!!
 
                             } else if (otherCache.getCache().get(posicionCache).getEstado() == 'M') {
-                                //SE COPIA EL BLOQUE A MEMORIA!!!
-                                //SE COPIA EL BLOQUE A CACHE!!!
+                                MainMemory.getMainMemoryInstance().setDatosBloque(IR.get(1), otherCache.getCache().get(posicionCache).getPalabras());
+                                otherCache.setBloqueCache(posicionCache , MainMemory.getMainMemoryInstance().getDatos().get(numeroBloque).getWords());
                                 otherCache.getCache().get(posicionCache).setEstado('I');
                                 otherCache.dataCacheLock.release();
                                 BusData.getBusDataInsance().lock.release();//creo que asi se hace
@@ -243,8 +244,8 @@ public class Thread implements Runnable { //corre el hilillo
                 if (otherCache.getCache().get(posicionCache).getEtiqueta() == numeroBloque) {
                     if (otherCache.dataCacheLock.tryAcquire()) {
                         if (otherCache.getCache().get(posicionCache).getEstado() == 'M') {
-                            //SE COPIA EL BLOQUE A MEMORIA!!!
-                            //SE COPIA EL BLOQUE A CACHE!!!
+                            MainMemory.getMainMemoryInstance().setDatosBloque(IR.get(1), otherCache.getCache().get(posicionCache).getPalabras());
+                            otherCache.setBloqueCache(posicionCache , MainMemory.getMainMemoryInstance().getDatos().get(numeroBloque).getWords());
                             this.getDataCache().getCache().get(posicionCache).setEstado('I');
                             BusData.getBusDataInsance().lock.release();//creo que asi se hace
                             this.dataCache.dataCacheLock.release();//será??????
@@ -255,17 +256,16 @@ public class Thread implements Runnable { //corre el hilillo
                             //AVANZA EL RELOJ!!!
                         } else if (otherCache.getCache().get(posicionCache).getEstado() == 'C') {
                             otherCache.getCache().get(posicionCache).setEstado('I');
-                            //EL BLOQUE SE SUBE DE MEMORIA!!!
+                            MainMemory.getMainMemoryInstance().getDatos().get(numeroBloque);
                             otherCache.dataCacheLock.release();
                             //AVANZA EL RELOJ!!!
                         } else if (otherCache.getCache().get(posicionCache).getEstado() == 'I') {
-                            //EL BLOQUE SE SUBE DE MEMORIA!!!
+                            MainMemory.getMainMemoryInstance().getDatos().get(numeroBloque);
                             otherCache.dataCacheLock.release();
                             //AVANZA EL RELOJ!!!
                         }
                     } else {
-                        //TRAER BLOQUE DE MEMORIA!!!
-                        //GUARDAR DATOS EN CACHE PROPIA!!!
+                        dataCache.setBloqueCache(posicionCache , MainMemory.getMainMemoryInstance().getDatos().get(numeroBloque).getWords());
                         otherCache.dataCacheLock.release();
                         BusData.getBusDataInsance().lock.release();//creo que asi se hace
                         //AVANZA EL RELOJ!!!
