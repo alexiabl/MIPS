@@ -4,6 +4,7 @@ import arquitectura.mips.block.BlockInstructions;
 import arquitectura.mips.cache.DataCache;
 import arquitectura.mips.cache.InstructionCache;
 import arquitectura.mips.memory.InstructionsMemory;
+import arquitectura.mips.memory.MainMemory;
 
 import javax.xml.crypto.Data;
 import java.util.ArrayList;
@@ -82,7 +83,82 @@ public class Thread implements Runnable { //corre el hilillo
         return numDeBloque % tamCache;
     }
 
-    public void LW() {
+    public void LW(){
+        int numeroBloque = getNumeroDeBloque(IR.get(1), 16);
+        int numeroPalabra = getNumeroDePalabra(IR.get(1), 16, 4);
+        int posicionCache = getPosicionCache(numeroBloque, this.dataCache.getSize());
+
+        DataCache otherCache = dataCache.getRemoteCache(); //asi se obtiene la otra cache
+
+        if (this.dataCache.dataCacheLock.tryAcquire()) { //siempre se bloquea la cache
+
+            if (dataCache.getCache().get(posicionCache).getEtiqueta() == numeroBloque) {
+                if (dataCache.getCache().get(posicionCache).getEstado() == 'M' || dataCache.getCache().get(posicionCache).getEstado() == 'C') {
+                    registers.set(IR.get(2), dataCache.getCache().get(posicionCache).getPalabras().get(numeroPalabra));
+                    this.dataCache.dataCacheLock.release();//será??????
+                } else {
+                    //BLOQUEAR BUS!!!!!!!!!!!
+                    BusData.getBusDataInsance().lock.tryAcquire();
+
+                    if (otherCache.dataCacheLock.tryAcquire()) { //se bloquea la otra cache
+                        if (otherCache.getCache().get(posicionCache).getEtiqueta() == numeroBloque) {
+
+                            if (otherCache.getCache().get(posicionCache).getEstado() == 'C') {
+
+                                registers.set(IR.get(2), otherCache.getCache().get(posicionCache).getPalabras().get(numeroPalabra));
+                                this.dataCache.dataCacheLock.release();//será??????
+                                otherCache.dataCacheLock.release();//será??????
+                            } else if (otherCache.getCache().get(posicionCache).getEstado() == 'M') {
+
+                                MainMemory.getMainMemoryInstance().setDatosBloque(IR.get(1), otherCache.getCache().get(posicionCache).getPalabras());
+                                //this.dataCache.setBloqueCache(posicionCache,otherCache.getBloqueCache(posicionCache));
+                                this.dataCache.getCache().set(posicionCache, otherCache.getCache().get(posicionCache));
+                                this.dataCache.getCache().get(posicionCache).setEstado('C');
+                                otherCache.getCache().get(posicionCache).setEstado('C');
+                                this.dataCache.dataCacheLock.release();//será??????
+                                //LIBERAR BUS !!!
+                                BusData.getBusDataInsance().lock.release();//creo que asi se hace
+
+                                registers.set(IR.get(2), otherCache.getCache().get(posicionCache).getPalabras().get(numeroPalabra));
+                                otherCache.dataCacheLock.release();//será??????
+                            } else if (otherCache.getCache().get(posicionCache).getEstado() == 'I') {
+
+                                otherCache.dataCacheLock.release();//será??????
+                                MainMemory.getMainMemoryInstance().setDatosBloque(IR.get(1), dataCache.getCache().get(posicionCache).getPalabras());
+                                this.dataCache.getCache().get(posicionCache).setEstado('C');
+                                //LIBERAR BUS !!!
+                                BusData.getBusDataInsance().lock.release();//creo que asi se hace
+
+                                registers.set(IR.get(2), dataCache.getCache().get(posicionCache).getPalabras().get(numeroPalabra));
+                                this.dataCache.dataCacheLock.release();//será??????
+                            }
+                        } else {
+                            MainMemory.getMainMemoryInstance().setDatosBloque(IR.get(1), dataCache.getCache().get(posicionCache).getPalabras());
+                            registers.set(IR.get(2), dataCache.getCache().get(posicionCache).getPalabras().get(numeroPalabra));
+                            //LIBERAR BUS !!!
+                            BusData.getBusDataInsance().lock.release();//creo que asi se hace
+                            this.dataCache.dataCacheLock.release();//será??????
+                        }
+                    }
+                }
+            } else {
+                //PARTE DE LA VICTIMA
+                if (otherCache.getCache().get(posicionCache).getEtiqueta() == numeroBloque) {
+                    if (otherCache.getCache().get(posicionCache).getEstado() == 'M') {
+                        MainMemory.getMainMemoryInstance().setDatosBloque(IR.get(1), otherCache.getCache().get(posicionCache).getPalabras());
+                        otherCache.getCache().get(posicionCache).setEstado('I');
+                        if (this.dataCache.dataCacheLock.tryAcquire()) {
+
+                        }
+                    }
+                }
+            }
+        } else {
+            //NO SE BLOQUEO LA POSICION... AUMENTAR CICLO DE RELOJ
+        }
+    }
+
+    public void LW2() {
         int numeroBloque = getNumeroDeBloque(IR.get(1), 16);
         int numeroPalabra = getNumeroDePalabra(IR.get(1), 16, 4);
         int posicionCache = getPosicionCache(numeroBloque, this.dataCache.getSize());
@@ -95,9 +171,12 @@ public class Thread implements Runnable { //corre el hilillo
                 } else {
                     //bloquear bus
                     BusData.getBusDataInsance().lock.tryAcquire();
+                    BusData.getBusDataInsance().lock.release();//creo que asi se hace
                     //acceder a la otra caché
                     //otraCache(numeroBloque, numeroPalabra, posicionCache);
+
                     DataCache otherCache = dataCache.getRemoteCache(); //asi se obtiene la otra cache
+
                 }
             } else {
 
