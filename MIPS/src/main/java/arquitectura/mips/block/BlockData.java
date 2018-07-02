@@ -3,7 +3,7 @@ package arquitectura.mips.block;
 import java.util.ArrayList;
 
 /**
- * Created by alexiaborchgrevink on 6/4/18.
+ * Block of data that Main memory wil hold to store the values of the words.
  */
 public class BlockData extends Block {
 

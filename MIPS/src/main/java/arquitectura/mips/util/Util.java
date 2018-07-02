@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Queue;
 
 /**
- * Created by alexiaborchgrevink on 6/11/18.
+ * Class used to read Hilillos files and assign PC, create context queue and insert to instructions memory.
  */
 public class Util {
 

@@ -6,7 +6,7 @@ import arquitectura.mips.cache.BlockCache;
 import java.util.ArrayList;
 
 /**
- * Created by alexiaborchgrevink on 6/4/18.
+ * Shared memory of our system. Uses singleton pattern so that the same MainMemory isntance will be used on the entire program
  */
 public class MainMemory {
 
@@ -21,6 +21,7 @@ public class MainMemory {
         for (int j = 0; j < 4; j++) {
             words.add(1);
         }
+        //We initialize our shared memory with 1's
         for (int i = 0; i < this.size; i++) {
             BlockData bloque = new BlockData();
             bloque.setNumBloque(i);

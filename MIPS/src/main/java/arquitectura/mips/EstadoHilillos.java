@@ -5,7 +5,7 @@ import arquitectura.mips.block.Block;
 import java.util.UUID;
 
 /**
- * Created by alexiaborchgrevink on 6/11/18.
+ * Hilillos state to determine if a Block can be accessed.
  */
 public class EstadoHilillos {
 

@@ -3,7 +3,7 @@ package arquitectura.mips.cache;
 import java.util.ArrayList;
 
 /**
- * Created by alexiaborchgrevink on 6/4/18.
+ *  Block that holds the information in the Caches.
  */
 public class BlockCache {
 

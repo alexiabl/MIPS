@@ -6,7 +6,7 @@ import arquitectura.mips.cache.InstructionCache;
 import java.util.ArrayList;
 
 /**
- * Created by alexiaborchgrevink on 6/4/18.
+ * Core that executes a thread
  */
 public class Core {
 
@@ -45,7 +45,6 @@ public class Core {
     }
 
     public void setThread(Thread thread) {
-        //thread.getHilillo().getContext().setRegisters(this.registers);
         this.thread = thread;
 
     }

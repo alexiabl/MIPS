@@ -8,7 +8,7 @@ import java.util.concurrent.Semaphore;
 import java.util.concurrent.locks.Lock;
 
 /**
- * Created by alexiaborchgrevink on 6/4/18.
+ * Cache of instructions in our processor
  */
 public class InstructionCache {
 

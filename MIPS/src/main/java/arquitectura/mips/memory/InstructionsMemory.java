@@ -3,33 +3,37 @@ package arquitectura.mips.memory;
 import arquitectura.mips.block.BlockInstructions;
 
 import java.util.ArrayList;
+import java.util.concurrent.Semaphore;
 
 /**
- * Created by alexiaborchgrevink on 6/11/18.
+ * Instructions memory of our system. Uses singleton pattern so that the same InstructionsMemory isntance will be used on the entire program
  */
 public class InstructionsMemory {
 
-    private ArrayList<BlockInstructions> instrucciones;
+    private ArrayList<BlockInstructions> instructions;
     public static InstructionsMemory instructionsMemory;
+    private Semaphore lock;
 
 
     public InstructionsMemory() {
-        instrucciones = new ArrayList<BlockInstructions>();
+        this.lock = new Semaphore(1);
+        instructions = new ArrayList<BlockInstructions>();
         instructionsMemory = this;
     }
 
-    public ArrayList<BlockInstructions> getInstrucciones() {
-        return instrucciones;
+    public ArrayList<BlockInstructions> getInstructions() {
+        return instructions;
     }
 
-    public void setInstrucciones(ArrayList<BlockInstructions> instrucciones) {
-        this.instrucciones = instrucciones;
+    public void setInstructions(ArrayList<BlockInstructions> instructions) {
+        this.instructions = instructions;
     }
 
-    public void addBloqueInstruccion(BlockInstructions bloqueInstrucciones) {
-        this.instrucciones.add(bloqueInstrucciones);
+    public void addBloqueInstruccion(BlockInstructions bloqueinstructions) {
+        this.instructions.add(bloqueinstructions);
     }
 
+    //Creates new instance if null
     public static InstructionsMemory getInstructionsMemoryInstance() {
         if (instructionsMemory == null) {
             instructionsMemory = new InstructionsMemory();
@@ -40,4 +44,9 @@ public class InstructionsMemory {
     public static void setInstructionsMemory(InstructionsMemory instructionsMemory1) {
         instructionsMemory = instructionsMemory1;
     }
+
+    public Semaphore getLock() {
+        return lock;
+    }
+
 }

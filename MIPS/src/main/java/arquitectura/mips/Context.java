@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.UUID;
 
 /**
- * Created by alexiaborchgrevink on 6/4/18.
+ * Context holds information that will be used for each of the Hilillos that will be run.
  */
 public class Context {
 
