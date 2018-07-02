@@ -1,7 +1,7 @@
 package arquitectura.mips.block;
 
 /**
- * Created by alexiaborchgrevink on 6/11/18.
+ * Abstract class to define Blocks in memory
  */
 public abstract class Block {
 

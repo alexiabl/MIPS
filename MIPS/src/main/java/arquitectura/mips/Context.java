@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.UUID;
 
 /**
- * Created by alexiaborchgrevink on 6/4/18.
+ * Context holds information that will be used for each of the Hilillos that will be run.
  */
 public class Context {
 
@@ -20,8 +20,7 @@ public class Context {
         this.id = UUID.randomUUID();
         this.registers = new ArrayList<Integer>(32);
         for (int i = 0; i < 32; i++) {
-            Integer value = new Integer(0);
-            this.registers.add(value);
+            this.registers.add(0);
         }
         this.PCinitial = PCinitial;
     }

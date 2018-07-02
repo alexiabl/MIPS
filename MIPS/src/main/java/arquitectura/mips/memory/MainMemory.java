@@ -1,21 +1,34 @@
 package arquitectura.mips.memory;
 
 import arquitectura.mips.block.BlockData;
+import arquitectura.mips.cache.BlockCache;
 
 import java.util.ArrayList;
 
 /**
- * Created by alexiaborchgrevink on 6/4/18.
+ * Shared memory of our system. Uses singleton pattern so that the same MainMemory isntance will be used on the entire program
  */
 public class MainMemory {
 
     private ArrayList<BlockData> datos;
-    private int tamano;
+    private int size;
     private static MainMemory mainMemory;
 
-    public MainMemory(int tamano) {
+    public MainMemory(int size) {
         this.datos = new ArrayList<BlockData>();
-        this.tamano = tamano;
+        this.size = size;
+        ArrayList<Integer> words = new ArrayList<Integer>();
+        for (int j = 0; j < 4; j++) {
+            words.add(1);
+        }
+        //We initialize our shared memory with 1's
+        for (int i = 0; i < this.size; i++) {
+            BlockData bloque = new BlockData();
+            bloque.setNumBloque(i);
+            bloque.setWords(words);
+            this.datos.add(bloque);
+            mainMemory = this;
+        }
     }
 
     public static MainMemory getMainMemoryInstance() {
@@ -25,16 +38,12 @@ public class MainMemory {
         return mainMemory;
     }
 
-    public MainMemory() {
-        this.datos = new ArrayList<BlockData>();
+    public int getsize() {
+        return size;
     }
 
-    public int getTamano() {
-        return tamano;
-    }
-
-    public void setTamano(int tamano) {
-        this.tamano = tamano;
+    public void setsize(int size) {
+        this.size = size;
     }
 
     public void setDatosBloque(int indice, ArrayList<Integer> palabras){
@@ -43,7 +52,8 @@ public class MainMemory {
         datos.set(indice, temp);
     }
 
-    public ArrayList<BlockData> getDatos() {
-        return datos;
+    public ArrayList<BlockData> getBlocksMemory() {
+        return this.datos;
     }
+
 }

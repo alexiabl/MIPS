@@ -1,8 +1,8 @@
 package arquitectura.mips;
 
 /**
- * Created by alexiaborchgrevink on 6/11/18.
+ * Cores can be in these states during the simulation, regarding the Caches they are accessing.
  */
 public enum State {
-    FALLO_CACHE_DATOS, FALLO_CACHE_INS, CORRIENDO, ESPERANDO, FINALIZO_EJECUCION, FINALIZO_FALLO
+    DATA_CACHE_FAIL, INSTRUCTION_CACHE_FAIL, RUNNING, WAITING, FINALIZED
 }
