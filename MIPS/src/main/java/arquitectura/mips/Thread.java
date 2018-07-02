@@ -97,7 +97,6 @@ public class Thread implements Runnable { //corre el hilillo
                     registers.set(IR.get(2), dataCache.getCache().get(posicionCache).getPalabras().get(numeroPalabra));
                     this.dataCache.dataCacheLock.release();//será??????
                 } else {
-                    //BLOQUEAR BUS!!!!!!!!!!!
                     BusData.getBusDataInsance().lock.tryAcquire();
 
                     if (otherCache.dataCacheLock.tryAcquire()) { //se bloquea la otra cache
@@ -116,7 +115,6 @@ public class Thread implements Runnable { //corre el hilillo
                                 this.dataCache.getCache().get(posicionCache).setEstado('C');
                                 otherCache.getCache().get(posicionCache).setEstado('C');
                                 this.dataCache.dataCacheLock.release();//será??????
-                                //LIBERAR BUS !!!
                                 BusData.getBusDataInsance().lock.release();//creo que asi se hace
 
                                 registers.set(IR.get(2), otherCache.getCache().get(posicionCache).getPalabras().get(numeroPalabra));
@@ -126,7 +124,6 @@ public class Thread implements Runnable { //corre el hilillo
                                 otherCache.dataCacheLock.release();//será??????
                                 MainMemory.getMainMemoryInstance().setDatosBloque(IR.get(1), dataCache.getCache().get(posicionCache).getPalabras());
                                 this.dataCache.getCache().get(posicionCache).setEstado('C');
-                                //LIBERAR BUS !!!
                                 BusData.getBusDataInsance().lock.release();//creo que asi se hace
 
                                 registers.set(IR.get(2), dataCache.getCache().get(posicionCache).getPalabras().get(numeroPalabra));
@@ -135,7 +132,6 @@ public class Thread implements Runnable { //corre el hilillo
                         } else {
                             MainMemory.getMainMemoryInstance().setDatosBloque(IR.get(1), dataCache.getCache().get(posicionCache).getPalabras());
                             registers.set(IR.get(2), dataCache.getCache().get(posicionCache).getPalabras().get(numeroPalabra));
-                            //LIBERAR BUS !!!
                             BusData.getBusDataInsance().lock.release();//creo que asi se hace
                             this.dataCache.dataCacheLock.release();//será??????
                         }
