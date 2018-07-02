@@ -5,6 +5,7 @@ import arquitectura.mips.cache.DataCache;
 import arquitectura.mips.cache.InstructionCache;
 import arquitectura.mips.memory.InstructionsMemory;
 import arquitectura.mips.memory.MainMemory;
+import sun.applet.Main;
 
 import javax.xml.crypto.Data;
 import java.util.ArrayList;
@@ -77,7 +78,6 @@ public class Thread extends java.lang.Thread { //corre el hilillo
                     registers.set(IR.get(2), dataCache.getCache().get(posicionCache).getPalabras().get(numeroPalabra));
                     this.dataCache.dataCacheLock.release();//será??????
                 } else {
-                    //BLOQUEAR BUS!!!!!!!!!!!
                     BusData.getBusDataInsance().lock.tryAcquire();
 
                     if (otherCache.dataCacheLock.tryAcquire()) { //se bloquea la otra cache
@@ -96,7 +96,6 @@ public class Thread extends java.lang.Thread { //corre el hilillo
                                 this.dataCache.getCache().get(posicionCache).setEstado('C');
                                 otherCache.getCache().get(posicionCache).setEstado('C');
                                 this.dataCache.dataCacheLock.release();//será??????
-                                //LIBERAR BUS !!!
                                 BusData.getBusDataInsance().lock.release();//creo que asi se hace
 
                                 registers.set(IR.get(2), otherCache.getCache().get(posicionCache).getPalabras().get(numeroPalabra));
@@ -106,7 +105,6 @@ public class Thread extends java.lang.Thread { //corre el hilillo
                                 otherCache.dataCacheLock.release();//será??????
                                 MainMemory.getMainMemoryInstance().setDatosBloque(IR.get(1), dataCache.getCache().get(posicionCache).getPalabras());
                                 this.dataCache.getCache().get(posicionCache).setEstado('C');
-                                //LIBERAR BUS !!!
                                 BusData.getBusDataInsance().lock.release();//creo que asi se hace
 
                                 registers.set(IR.get(2), dataCache.getCache().get(posicionCache).getPalabras().get(numeroPalabra));
@@ -115,7 +113,6 @@ public class Thread extends java.lang.Thread { //corre el hilillo
                         } else {
                             MainMemory.getMainMemoryInstance().setDatosBloque(numeroBloque, dataCache.getCache().get(posicionCache).getPalabras());
                             registers.set(IR.get(2), dataCache.getCache().get(posicionCache).getPalabras().get(numeroPalabra));
-                            //LIBERAR BUS !!!
                             BusData.getBusDataInsance().lock.release();//creo que asi se hace
                             this.dataCache.dataCacheLock.release();//será??????
                         }
@@ -127,9 +124,6 @@ public class Thread extends java.lang.Thread { //corre el hilillo
                     if (otherCache.getCache().get(posicionCache).getEstado() == 'M') {
                         MainMemory.getMainMemoryInstance().setDatosBloque(IR.get(1), otherCache.getCache().get(posicionCache).getPalabras());
                         otherCache.getCache().get(posicionCache).setEstado('I');
-                        if (this.dataCache.dataCacheLock.tryAcquire()) {
-
-                        }
                     }
                 }
             }
@@ -140,7 +134,7 @@ public class Thread extends java.lang.Thread { //corre el hilillo
 
     }
 
-    public void LW2() {
+    /*public void LW2() {
         int numeroBloque = getNumeroDeBloque(IR.get(1), 16);
         int numeroPalabra = getNumeroDePalabra(IR.get(1), 16, 4);
         int posicionCache = getPosicionCache(numeroBloque, this.dataCache.getSize());
@@ -150,6 +144,7 @@ public class Thread extends java.lang.Thread { //corre el hilillo
                 if (dataCache.getCache().get(posicionCache).getEstado() == 'M' || dataCache.getCache().get(posicionCache).getEstado() == 'C') {
                     registers.set(IR.get(2), dataCache.getCache().get(posicionCache).getPalabras().get(numeroPalabra));
                     //desbloquear posicion
+
                 } else {
                     //bloquear bus
                     BusData.getBusDataInsance().lock.tryAcquire();
@@ -173,118 +168,101 @@ public class Thread extends java.lang.Thread { //corre el hilillo
                 }
             }
         }
-    }
-
-/*
-    public void otraCache(int numeroBloque, int numeroPalabra, int posicionCache) {
-        //el if es parecido pero haciendo get de la cache del otro nucleo
-        if (dataCache.getCache().get(posicionCache).getEtiqueta() == numeroBloque) {
-            //el if es con la cache del otro lado
-            if (dataCache.getCache().get(posicionCache).getEstado() == 'C') {
-                //liberar posicion en otra cache
-                //gets de la otra cache
-                //subir bloque de memoria
-                //liberar posicion en esta cache
-            } else if (dataCache.getCache().get(posicionCache).getEstado() == 'M') {
-                //guardar en memoria lo que está en caché
-                //sobreescribir en la otra cache lo que esta en la cache actual
-                //cambiar el estado en el otro lado a C
-                //liberar posicion y bus en la otra cache
-
-                //los gets con la cache del otro lado
-                registers.set(IR.get(2), dataCache.getCache().get(posicionCache).getPalabras().get(numeroPalabra));
-                //liberar posicion de esta cache
-            } else if (dataCache.getCache().get(posicionCache).getEstado() == 'I') {
-                //liberar posicion en caché
-                //almacenar en el bloque de la cache el bloque corrspondiente de memoria
-                //cambiar el estado a M
-                //liberar bus
-
-                //los gets con la cache del otro lado
-                registers.set(IR.get(2), dataCache.getCache().get(posicionCache).getPalabras().get(numeroPalabra));
-                //liberar posicion de esta cache
-            }
-        }
     }*/
+
 
     public void SW() {
         int numeroBloque = getNumeroDeBloque(IR.get(1), 16);
         int numeroPalabra = getNumeroDePalabra(IR.get(1), 16, 4);
         int posicionCache = getPosicionCache(numeroBloque, dataCache.getSize());
-        //bloquear posicion cache!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        if (dataCache.getCache().get(posicionCache).getEtiqueta() == numeroBloque) {
-            if (dataCache.getCache().get(posicionCache).getEstado() == 'M') {
-                dataCache.getCache().get(posicionCache).setPalabra(numeroPalabra, registers.get(IR.get(2)));
-                //liberar posicion en esta cache
-                //avanza el reloj
-            } else if (dataCache.getCache().get(posicionCache).getEstado() == 'C') {
-                //se bloquea bus
-                //bloquear posicion en otra cache
-                //gets de otra cache
-                if (this.dataCache.getRemoteCache().getCache().get(posicionCache).getEstado() == 'C') {
-                    dataCache.getCache().get(posicionCache).setEstado('M');
-                    this.dataCache.getRemoteCache().getCache().get(posicionCache).setEstado('I');
+
+        DataCache otherCache = dataCache.getRemoteCache(); //asi se obtiene la otra cache
+
+        if (this.dataCache.dataCacheLock.tryAcquire()) {
+            if (dataCache.getCache().get(posicionCache).getEtiqueta() == numeroBloque) {
+                if (dataCache.getCache().get(posicionCache).getEstado() == 'M') {
+                    dataCache.getCache().get(posicionCache).setPalabra(numeroPalabra, registers.get(IR.get(2)));
+                    this.dataCache.dataCacheLock.release();//será??????
+                    //AVANZA EL CICLO DEL RELOJ!!!
+                } else if (dataCache.getCache().get(posicionCache).getEstado() == 'C') {
+                    BusData.getBusDataInsance().lock.tryAcquire();
+                    if (otherCache.dataCacheLock.tryAcquire()) { //se bloquea la otra cache
+                        if(otherCache.getCache().get(posicionCache).getEtiqueta() == numeroBloque && otherCache.getCache().get(posicionCache).getEstado() == 'C') {
+                            otherCache.getCache().get(posicionCache).setEstado('I');
+                            this.dataCache.getCache().get(posicionCache).setEstado('M');
+                            MainMemory.getMainMemoryInstance().setDatosBloque(IR.get(1), this.dataCache.getCache().get(posicionCache).getPalabras());
+                            this.dataCache.dataCacheLock.release();//será??????
+                            //AVANZA EL CICLO DEL RELOJ!!!
+                        }
+                        BusData.getBusDataInsance().lock.release();//creo que asi se hace
+                    }
+                } else if (dataCache.getCache().get(posicionCache).getEstado() == 'I') {
+                    BusData.getBusDataInsance().lock.tryAcquire();
+                    if(otherCache.dataCacheLock.tryAcquire()) {
+                        if (otherCache.getCache().get(posicionCache).getEtiqueta() == numeroBloque) {
+                            if (otherCache.getCache().get(posicionCache).getEstado() == 'C') {
+                                otherCache.getCache().get(posicionCache).setEstado('I');
+                                otherCache.dataCacheLock.release();
+
+                                BusData.getBusDataInsance().lock.release();//creo que asi se hace
+                                dataCache.setBloqueCache(posicionCache , MainMemory.getMainMemoryInstance().getDatos().get(numeroBloque).getWords());
+                                this.dataCache.getCache().get(posicionCache).setEstado('C');
+                                //AVANZA EL CICLO DEL RELOJ!!!
+
+                            } else if (otherCache.getCache().get(posicionCache).getEstado() == 'M') {
+                                MainMemory.getMainMemoryInstance().setDatosBloque(IR.get(1), otherCache.getCache().get(posicionCache).getPalabras());
+                                dataCache.setBloqueCache(posicionCache , MainMemory.getMainMemoryInstance().getDatos().get(numeroBloque).getWords());
+                                otherCache.getCache().get(posicionCache).setEstado('I');
+                                otherCache.dataCacheLock.release();
+                                BusData.getBusDataInsance().lock.release();//creo que asi se hace
+                                dataCache.getCache().get(posicionCache).setPalabra(numeroPalabra, registers.get(IR.get(2)));
+                                dataCache.getCache().get(posicionCache).setEstado('M');
+                                this.dataCache.dataCacheLock.release();//será??????
+                            }
+                        }
+                    }
                 }
-                //se sobreescribe en memoria el bloque
-                //liberar la posicion en caché
-            } else if (dataCache.getCache().get(posicionCache).getEstado() == 'I') {
-                //bloquea el bus
-                //bloquea la posicion en la otra cache
-                //revisa otra cache
-                if (this.dataCache.getRemoteCache().getCache().get(posicionCache).getEtiqueta() == numeroBloque) {
-                    if (this.dataCache.getRemoteCache().getCache().get(posicionCache).getEstado() == 'C') {
-                        this.dataCache.getRemoteCache().getCache().get(posicionCache).setEstado('I');
-                        //libera pos caché
-                        //libera bus
-                        //el bloque se sube de memoria y avanza un ciclo de reloj
-                    } else if (this.dataCache.getRemoteCache().getCache().get(posicionCache).getEstado() == 'M') {
-                        //se copia el bloque a memoria y a caché
-                        //libera pos otra caché
-                        //libera bus
-                        dataCache.getCache().get(posicionCache).setPalabra(numeroPalabra, registers.get(IR.get(2)));
-                        dataCache.getCache().get(posicionCache).setEstado('M');
-                        //libera pos caché
+            } else {
+
+                if (otherCache.getCache().get(posicionCache).getEtiqueta() == numeroBloque) {
+                    if (otherCache.dataCacheLock.tryAcquire()) {
+                        if (otherCache.getCache().get(posicionCache).getEstado() == 'M') {
+                            MainMemory.getMainMemoryInstance().setDatosBloque(IR.get(1), otherCache.getCache().get(posicionCache).getPalabras());
+                            dataCache.setBloqueCache(posicionCache , MainMemory.getMainMemoryInstance().getDatos().get(numeroBloque).getWords());
+                            this.getDataCache().getCache().get(posicionCache).setEstado('I');
+                            BusData.getBusDataInsance().lock.release();//creo que asi se hace
+                            this.dataCache.dataCacheLock.release();//será??????
+
+                            otherCache.getCache().get(posicionCache).setPalabra(numeroPalabra, registers.get(IR.get(2)));
+                            otherCache.getCache().get(posicionCache).setEstado('M');
+                            otherCache.dataCacheLock.release();
+                            //AVANZA EL RELOJ!!!
+                        } else if (otherCache.getCache().get(posicionCache).getEstado() == 'C') {
+                            otherCache.getCache().get(posicionCache).setEstado('I');
+                            MainMemory.getMainMemoryInstance().getDatos().get(numeroBloque);
+                            otherCache.dataCacheLock.release();
+                            //AVANZA EL RELOJ!!!
+                        } else if (otherCache.getCache().get(posicionCache).getEstado() == 'I') {
+                            MainMemory.getMainMemoryInstance().getDatos().get(numeroBloque);
+                            otherCache.dataCacheLock.release();
+                            //AVANZA EL RELOJ!!!
+                        }
+                    } else {
+                        dataCache.setBloqueCache(posicionCache , MainMemory.getMainMemoryInstance().getDatos().get(numeroBloque).getWords());
+                        dataCache.getCache().get(posicionCache).setEstado('C');
+                        otherCache.dataCacheLock.release();
+                        BusData.getBusDataInsance().lock.release();//creo que asi se hace
+                        //AVANZA EL RELOJ!!!
+                    }
+                } else {
+                    if (otherCache.getCache().get(posicionCache).getEstado() == 'M') {
+                        MainMemory.getMainMemoryInstance().setDatosBloque(IR.get(1), otherCache.getCache().get(posicionCache).getPalabras());
+                        otherCache.getCache().get(posicionCache).setEstado('I');
                     }
                 }
             }
         } else {
-            //gets de la otra cache
-            if (dataCache.getCache().get(posicionCache).getEtiqueta() != numeroBloque) {
-                //gets de la otra cache
-                if (dataCache.getCache().get(posicionCache).getEstado() == 'M') {
-                    //copiar bloque en memoria
-                    //cambiarle el estado a invalido
-                    ///!!!bloquear posicion en cache, no se bloquea posicion, se bloquea la cache entera
-                    if (this.dataCache.getRemoteCache().getCache().get(posicionCache).getEtiqueta() == numeroBloque) {
-                        if (this.dataCache.getRemoteCache().getCache().get(posicionCache).getEstado() == 'C') {
-                            //se sube a propia cache de memoria
-                            //se libera la posicion de cache
-                            //se avanza ciclo reloj
-
-
-                        } else if (this.dataCache.getRemoteCache().getCache().get(posicionCache).getEstado() == 'M') {
-                            //copia el bloque a memoria y a la otra cache
-                            dataCache.getCache().get(posicionCache).setEstado('I');
-                            //se libera el bus
-                            //se libera la otra posicion de cache
-                            this.dataCache.getRemoteCache().getCache().get(posicionCache).setPalabra(numeroPalabra, registers.get(IR.get(2)));
-                            //se libera cache
-                            //avanza el reloj
-
-                        } else if (this.dataCache.getRemoteCache().getCache().get(posicionCache).getEstado() == 'I') {
-                            //se libera posicion de cache
-                            //Se sube el bloque a propia cache desde memoria
-                            //se libera esa posicion
-                            //avanza el reloj
-                        }
-                    } else {
-                        //traerbloque de memoria
-                        //guardar dato en cache propia
-                        //liberar bus
-                        //liberar posicion en cache
-                    }
-                }
-            }
+            //AUMENTAR CICLO DE RELOJ!!!
         }
         Clock.executeBarrier();
     }
