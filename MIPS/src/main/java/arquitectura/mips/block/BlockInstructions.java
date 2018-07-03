@@ -3,7 +3,7 @@ package arquitectura.mips.block;
 import java.util.ArrayList;
 
 /**
- * Created by alexiaborchgrevink on 6/4/18.
+ * Block of instructions that will hold the decoded instructions in our InstructionsMemory
  */
 public class BlockInstructions extends Block {
 

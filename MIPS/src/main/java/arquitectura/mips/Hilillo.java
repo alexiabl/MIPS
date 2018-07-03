@@ -1,7 +1,7 @@
 package arquitectura.mips;
 
 /**
- * Created by alexiaborchgrevink on 6/11/18.
+ * Hilillo that will "execute" the instructions
  */
 public class Hilillo {
 

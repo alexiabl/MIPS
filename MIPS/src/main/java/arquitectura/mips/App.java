@@ -4,10 +4,7 @@ import arquitectura.Simulation;
 
 import java.io.IOException;
 
-/**
- * Hello world!
- *
- */
+
 public class App
 {
 
