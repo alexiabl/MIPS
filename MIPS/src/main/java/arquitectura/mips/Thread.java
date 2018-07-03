@@ -52,25 +52,6 @@ public class Thread extends java.lang.Thread { //corre el hilillo
         this.registers = hilillo.getContext().getRegisters();
     }
 
-    public Hilillo getHilillo() {
-        return this.hilillo;
-    }
-
-    public DataCache getDataCache() {
-        return this.dataCache;
-    }
-
-    public void setDataCache(DataCache dataCache) {
-        this.dataCache = dataCache;
-    }
-
-    public InstructionCache getInstructionCache() {
-        return instructionCache;
-    }
-
-    public void setInstructionCache(InstructionCache instructionCache) {
-        this.instructionCache = instructionCache;
-    }
 
     int getNumeroDeBloque(int posicion, int tamBloqueMemoria) {
         return posicion / tamBloqueMemoria;
@@ -231,13 +212,13 @@ public class Thread extends java.lang.Thread { //corre el hilillo
                                 otherCache.dataCacheLock.release();
 
                                 BusData.getBusDataInsance().lock.release();//creo que asi se hace
-                                dataCache.setBloqueCache(posicionCache , MainMemory.getMainMemoryInstance().getDatos().get(numeroBloque).getWords());
+                                dataCache.setBloqueCache(posicionCache, MainMemory.getMainMemoryInstance().getBlocksMemory().get(numeroBloque).getWords());
                                 this.dataCache.getCache().get(posicionCache).setEstado('C');
                                 //AVANZA EL CICLO DEL RELOJ!!!
 
                             } else if (otherCache.getCache().get(posicionCache).getEstado() == 'M') {
                                 MainMemory.getMainMemoryInstance().setDatosBloque(IR.get(1), otherCache.getCache().get(posicionCache).getPalabras());
-                                dataCache.setBloqueCache(posicionCache , MainMemory.getMainMemoryInstance().getDatos().get(numeroBloque).getWords());
+                                dataCache.setBloqueCache(posicionCache, MainMemory.getMainMemoryInstance().getBlocksMemory().get(numeroBloque).getWords());
                                 otherCache.getCache().get(posicionCache).setEstado('I');
                                 otherCache.dataCacheLock.release();
                                 BusData.getBusDataInsance().lock.release();//creo que asi se hace
@@ -254,7 +235,7 @@ public class Thread extends java.lang.Thread { //corre el hilillo
                     if (otherCache.dataCacheLock.tryAcquire()) {
                         if (otherCache.getCache().get(posicionCache).getEstado() == 'M') {
                             MainMemory.getMainMemoryInstance().setDatosBloque(IR.get(1), otherCache.getCache().get(posicionCache).getPalabras());
-                            dataCache.setBloqueCache(posicionCache , MainMemory.getMainMemoryInstance().getDatos().get(numeroBloque).getWords());
+                            dataCache.setBloqueCache(posicionCache, MainMemory.getMainMemoryInstance().getBlocksMemory().get(numeroBloque).getWords());
                             this.getDataCache().getCache().get(posicionCache).setEstado('I');
                             BusData.getBusDataInsance().lock.release();//creo que asi se hace
                             this.dataCache.dataCacheLock.release();//será??????
@@ -265,16 +246,16 @@ public class Thread extends java.lang.Thread { //corre el hilillo
                             //AVANZA EL RELOJ!!!
                         } else if (otherCache.getCache().get(posicionCache).getEstado() == 'C') {
                             otherCache.getCache().get(posicionCache).setEstado('I');
-                            MainMemory.getMainMemoryInstance().getDatos().get(numeroBloque);
+                            MainMemory.getMainMemoryInstance().getBlocksMemory().get(numeroBloque);
                             otherCache.dataCacheLock.release();
                             //AVANZA EL RELOJ!!!
                         } else if (otherCache.getCache().get(posicionCache).getEstado() == 'I') {
-                            MainMemory.getMainMemoryInstance().getDatos().get(numeroBloque);
+                            MainMemory.getMainMemoryInstance().getBlocksMemory().get(numeroBloque);
                             otherCache.dataCacheLock.release();
                             //AVANZA EL RELOJ!!!
                         }
                     } else {
-                        dataCache.setBloqueCache(posicionCache , MainMemory.getMainMemoryInstance().getDatos().get(numeroBloque).getWords());
+                        dataCache.setBloqueCache(posicionCache, MainMemory.getMainMemoryInstance().getBlocksMemory().get(numeroBloque).getWords());
                         dataCache.getCache().get(posicionCache).setEstado('C');
                         otherCache.dataCacheLock.release();
                         BusData.getBusDataInsance().lock.release();//creo que asi se hace
@@ -287,7 +268,7 @@ public class Thread extends java.lang.Thread { //corre el hilillo
                         if (otherCache.dataCacheLock.tryAcquire()) {
                             if (otherCache.getCache().get(posicionCache).getEstado() == 'M') {
                                 MainMemory.getMainMemoryInstance().setDatosBloque(IR.get(1), otherCache.getCache().get(posicionCache).getPalabras());
-                                dataCache.setBloqueCache(posicionCache , MainMemory.getMainMemoryInstance().getDatos().get(numeroBloque).getWords());
+                                dataCache.setBloqueCache(posicionCache, MainMemory.getMainMemoryInstance().getBlocksMemory().get(numeroBloque).getWords());
                                 this.getDataCache().getCache().get(posicionCache).setEstado('I');
                                 BusData.getBusDataInsance().lock.release();//creo que asi se hace
                                 this.dataCache.dataCacheLock.release();//será??????
@@ -298,16 +279,16 @@ public class Thread extends java.lang.Thread { //corre el hilillo
                                 //AVANZA EL RELOJ!!!
                             } else if (otherCache.getCache().get(posicionCache).getEstado() == 'C') {
                                 otherCache.getCache().get(posicionCache).setEstado('I');
-                                MainMemory.getMainMemoryInstance().getDatos().get(numeroBloque);
+                                MainMemory.getMainMemoryInstance().getBlocksMemory().get(numeroBloque);
                                 otherCache.dataCacheLock.release();
                                 //AVANZA EL RELOJ!!!
                             } else if (otherCache.getCache().get(posicionCache).getEstado() == 'I') {
-                                MainMemory.getMainMemoryInstance().getDatos().get(numeroBloque);
+                                MainMemory.getMainMemoryInstance().getBlocksMemory().get(numeroBloque);
                                 otherCache.dataCacheLock.release();
                                 //AVANZA EL RELOJ!!!
                             }
                         } else {
-                            dataCache.setBloqueCache(posicionCache , MainMemory.getMainMemoryInstance().getDatos().get(numeroBloque).getWords());
+                            dataCache.setBloqueCache(posicionCache, MainMemory.getMainMemoryInstance().getBlocksMemory().get(numeroBloque).getWords());
                             dataCache.getCache().get(posicionCache).setEstado('C');
                             otherCache.dataCacheLock.release();
                             BusData.getBusDataInsance().lock.release();//creo que asi se hace
@@ -447,7 +428,7 @@ public class Thread extends java.lang.Thread { //corre el hilillo
         int endIR = this.hilillo.getContext().getPCfinal();
         int count = this.hilillo.getContext().getPCinitial();
         while (count <= endIR) {
-            BlockInstructions blockInstructions = InstructionsMemory.getInstructionsMemoryInstance().getInstrucciones().get(this.PC);
+            BlockInstructions blockInstructions = InstructionsMemory.getInstructionsMemoryInstance().getInstructions().get(this.PC);
             this.IR = blockInstructions.getInstructions();
             this.executeInstruction(blockInstructions.getInstructions());
             count++;
