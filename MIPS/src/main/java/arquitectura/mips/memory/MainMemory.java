@@ -14,6 +14,7 @@ public class MainMemory {
     private int size;
     private static MainMemory mainMemory;
 
+    //Our main memory is initialized with words as 1s
     public MainMemory(int size) {
         this.datos = new ArrayList<BlockData>();
         this.size = size;

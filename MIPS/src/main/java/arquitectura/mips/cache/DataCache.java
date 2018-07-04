@@ -14,6 +14,7 @@ public class DataCache {
     public Semaphore dataCacheLock;
     private DataCache remoteCache;
 
+    //Our data cache is initalized with Blocks set to 1s and Invalid state
     public DataCache(int size) {
         this.cache = new ArrayList<BlockCache>();
         this.size = size;
@@ -51,6 +52,7 @@ public class DataCache {
         this.remoteCache = remoteCache;
     }
 
+    //Set words in a Block in the position
     public void setBloqueCache(int posicion, ArrayList<Integer> palabras) {
         BlockCache bloque = new BlockCache();
         bloque.setPalabras(palabras);
@@ -58,6 +60,7 @@ public class DataCache {
         cache.set(posicion % this.size, bloque);
     }
 
+    //Update a specific word in the cache with the given value
     public void updateWord(int cachePosition, int wordsIndex, int value) {
         this.getCache().get(cachePosition).getPalabras().set(wordsIndex, value);
     }

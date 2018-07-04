@@ -8,13 +8,10 @@ import java.util.UUID;
  */
 public class Context {
 
-    //cola de contextos
     private int PCinitial;
     private int PCfinal;
     private ArrayList<Integer> registers;
     private UUID id;
-    //start time
-    //end time
 
     public Context(int PCinitial) {
         this.id = UUID.randomUUID();

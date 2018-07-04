@@ -33,6 +33,7 @@ public class InstructionsMemory {
         this.instructions = instructions;
     }
 
+    //Adds an instruction Block to our instructions memory
     public void addBloqueInstruccion(BlockInstructions bloqueinstructions) {
         this.instructions.add(bloqueinstructions);
     }

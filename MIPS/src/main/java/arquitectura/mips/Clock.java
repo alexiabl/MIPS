@@ -7,15 +7,10 @@ import java.util.concurrent.Semaphore;
  */
 public class Clock {
 
-    /// Number of cores that will be run in our simulation.
     private static int coreCount = 2;
-    /// Number of cores that already finished a instruction.
     private static int counter = 0;
-    /// Lock that will prevent concurency problems regarding variables' modifications.
     private static final Semaphore mutex = new Semaphore(1);
-    /// Barrier that prevent our different cores from continuing, if other cores are yet to finish a instruction.
     private static final Semaphore barrier = new Semaphore(1);
-    /// Number if cycles that occurred since the beginning of our simulation.
     private static int cycle = 0;
 
     private static Clock instance = null;
@@ -23,7 +18,6 @@ public class Clock {
     private Clock() {
     }
 
-    /// Create a new instance of our clock.
     public static Clock getInstance() {
         if (instance == null) {
             instance = new Clock();
@@ -71,19 +65,14 @@ public class Clock {
      */
     public static void executeBarrier() {
         try {
-            // Increase counter.
             mutex.acquire();
-            // Should the counter be less than our core count, we need to wait in our barrier.
             if (counter + 1 < coreCount && coreCount > 1) {
                 counter++;
                 mutex.release();
-                // Acquire our barrier and wait for the last core to finish.
                 barrier.acquire();
             } else {
                 cycle++;
-                // Release our barrier.
                 barrier.release(counter);
-                // After the last core finishes, we must increase our cycle count and reduce our counter.
                 counter = 0;
                 mutex.release();
             }
