@@ -45,7 +45,6 @@ public class Core {
 
     public void setThread(Thread thread) {
         this.thread = thread;
-
     }
 
     public ArrayList<Integer> getRegisters() {

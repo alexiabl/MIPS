@@ -46,7 +46,11 @@ public class Util {
         this.hilillos = new LinkedList<Hilillo>();
     }
 
-    //Reads Hilillos files and inserts into our Instructions Memory while creating the Context queue
+    /**
+     * Reads Hilillos files and inserts into our Instructions Memory while creating the Context queue and a list
+     * of hilillos
+     */
+
     public void readFiles() {
         int blockCounter = 0;
         int currentPosition = 0;
@@ -92,6 +96,7 @@ public class Util {
         }
     }
 
+    //Adds to context queue so that the hilillos can poll from the context queue
     public void addToContextQueue(Context c) {
         this.contextQueue.add(c);
     }
