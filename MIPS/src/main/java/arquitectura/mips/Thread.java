@@ -80,7 +80,7 @@ public class Thread extends java.lang.Thread { //corre el hilillo
             if (dataCache.getCache().get(posicionCache).getEtiqueta() == numeroBloque) {
                 if (dataCache.getCache().get(posicionCache).getEstado() == 'M' || dataCache.getCache().get(posicionCache).getEstado() == 'C') {
                     registers.set(IR.get(2), dataCache.getCache().get(posicionCache).getPalabras().get(numeroPalabra));
-                    this.dataCache.dataCacheLock.release();//será??????
+                    this.dataCache.dataCacheLock.release();
                 } else {
                     BusData.getBusDataInsance().lock.tryAcquire();
 
@@ -93,8 +93,8 @@ public class Thread extends java.lang.Thread { //corre el hilillo
                             if (otherCache.getCache().get(posicionCache).getEstado() == 'C') {
 
                                 registers.set(IR.get(2), otherCache.getCache().get(posicionCache).getPalabras().get(numeroPalabra));
-                                this.dataCache.dataCacheLock.release();//será??????
-                                otherCache.dataCacheLock.release();//será??????
+                                this.dataCache.dataCacheLock.release();
+                                otherCache.dataCacheLock.release();
                             } else if (otherCache.getCache().get(posicionCache).getEstado() == 'M') {
 
                                 //MainMemory.getMainMemoryInstance().setDatosBloque(numeroBloque, otherCache.getCache().get(posicionCache).getPalabras());
@@ -102,32 +102,32 @@ public class Thread extends java.lang.Thread { //corre el hilillo
                                 this.dataCache.getCache().set(posicionCache, otherCache.getCache().get(posicionCache));
                                 this.dataCache.getCache().get(posicionCache).setEstado('C');
                                 otherCache.getCache().get(posicionCache).setEstado('C');
-                                this.dataCache.dataCacheLock.release();//será??????
-                                BusData.getBusDataInsance().lock.release();//creo que asi se hace
+                                this.dataCache.dataCacheLock.release();
+                                BusData.getBusDataInsance().lock.release();
 
                                 registers.set(IR.get(2), otherCache.getCache().get(posicionCache).getPalabras().get(numeroPalabra));
-                                otherCache.dataCacheLock.release();//será??????
+                                otherCache.dataCacheLock.release();
                             } else if (otherCache.getCache().get(posicionCache).getEstado() == 'I') {
 
-                                otherCache.dataCacheLock.release();//será??????
+                                otherCache.dataCacheLock.release();
                                 //MainMemory.getMainMemoryInstance().setDatosBloque(IR.get(1), dataCache.getCache().get(posicionCache).getPalabras());
                                 this.dataCache.getCache().get(posicionCache).setEstado('C');
-                                BusData.getBusDataInsance().lock.release();//creo que asi se hace
+                                BusData.getBusDataInsance().lock.release();
 
                                 registers.set(IR.get(2), dataCache.getCache().get(posicionCache).getPalabras().get(numeroPalabra));
-                                this.dataCache.dataCacheLock.release();//será??????
+                                this.dataCache.dataCacheLock.release();
                                 //MainMemory.getMainMemoryInstance().setDatosBloque(IR.get(1), otherCache.getCache().get(posicionCache).getPalabras());
                                 otherCache.getCache().get(posicionCache).setEstado('M');
-                                BusData.getBusDataInsance().lock.release();//creo que asi se hace
+                                BusData.getBusDataInsance().lock.release();
 
                                 registers.set(IR.get(2), otherCache.getCache().get(posicionCache).getPalabras().get(numeroPalabra));
-                                otherCache.dataCacheLock.release();//será??????
+                                otherCache.dataCacheLock.release();
                             }
                         } else {
                             //MainMemory.getMainMemoryInstance().setDatosBloque(numeroBloque, dataCache.getCache().get(posicionCache).getPalabras());
                             registers.set(IR.get(2), dataCache.getCache().get(posicionCache).getPalabras().get(numeroPalabra));
-                            BusData.getBusDataInsance().lock.release();//creo que asi se hace
-                            this.dataCache.dataCacheLock.release();//será??????
+                            BusData.getBusDataInsance().lock.release();
+                            this.dataCache.dataCacheLock.release();
                         }
                     }
                 }
@@ -341,7 +341,7 @@ public class Thread extends java.lang.Thread { //corre el hilillo
                         }
                     }
                 }
-            } else { //se va a memoria
+            } else { //se va a memoria, caso donde no encuentra el bloque en ninguna de las caches
                 if (BusData.getBusDataInsance().lock.tryAcquire()) {
                     if (MainMemory.getMainMemoryInstance().getBlocksMemory().get(numeroBloque).getNumBloque() == numeroBloque) {
                         MainMemory.getMainMemoryInstance().getBlocksMemory().get(numeroBloque).getWords().set(numeroPalabra, this.registers.get(IR.get(2).intValue()));
@@ -359,7 +359,6 @@ public class Thread extends java.lang.Thread { //corre el hilillo
                 Clock.executeBarrier();
             }
         }
-        //hace falta el caso donde no encuentra el bloque en ninguna de las caches
         this.dataCache.dataCacheLock.release();
         Clock.executeBarrier();
     }
