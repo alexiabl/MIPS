@@ -11,6 +11,7 @@ public class BusInstructions {
     public static BusInstructions busInstructions;
 
     public BusInstructions() {
+        this.lock = new Semaphore(1);
     }
 
     public static BusInstructions getBusInstructionsInstance() {

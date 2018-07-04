@@ -82,7 +82,7 @@ public class Util {
                 }
                 context.setPCfinal(currentPosition);
                 this.addToContextQueue(context);
-                Hilillo hilillo = new Hilillo(40);
+                Hilillo hilillo = new Hilillo(40, "Hilillo-" + i);
                 this.hilillos.add(hilillo);
                 fileReader.close();
             } catch (IOException e) {
