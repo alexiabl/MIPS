@@ -19,6 +19,7 @@ public class DataCache {
         this.size = size;
         for (int i = 0; i < this.size; i++) {
             BlockCache bloque = new BlockCache();
+            bloque.setEtiqueta(1);
             bloque.setEstado('I');
             this.cache.add(bloque);
         }
@@ -55,5 +56,9 @@ public class DataCache {
         bloque.setPalabras(palabras);
         bloque.setEtiqueta(posicion);
         cache.set(posicion % this.size, bloque);
+    }
+
+    public void updateWord(int cachePosition, int wordsIndex, int value) {
+        this.getCache().get(cachePosition).getPalabras().set(wordsIndex, value);
     }
 }

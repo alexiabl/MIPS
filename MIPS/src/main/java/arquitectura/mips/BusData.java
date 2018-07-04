@@ -11,6 +11,7 @@ public class BusData {
     public static BusData busData;
 
     public BusData() {
+        this.lock = new Semaphore(1);
     }
 
 

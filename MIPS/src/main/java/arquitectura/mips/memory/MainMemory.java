@@ -46,10 +46,10 @@ public class MainMemory {
         this.size = size;
     }
 
-    public void setDatosBloque(int indice, ArrayList<Integer> palabras){
+    public synchronized void setDatosBloque(int indice, ArrayList<Integer> palabras) {
         BlockData temp= new BlockData();
         temp.setWords(palabras);
-        datos.set(indice, temp);
+        this.datos.set(indice, temp);
     }
 
     public ArrayList<BlockData> getBlocksMemory() {
