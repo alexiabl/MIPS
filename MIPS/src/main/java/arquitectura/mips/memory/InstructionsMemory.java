@@ -25,6 +25,10 @@ public class InstructionsMemory {
         return instructions;
     }
 
+    public BlockInstructions getBlockInstructions(int pos) {
+        return this.instructions.get(pos);
+    }
+
     public void setInstructions(ArrayList<BlockInstructions> instructions) {
         this.instructions = instructions;
     }
