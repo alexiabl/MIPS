@@ -224,12 +224,14 @@ public class Thread extends java.lang.Thread {
                         }
                         if (otherCache.getCache().get(posicionCache).getEtiqueta() == numeroBloque && otherCache.getCache().get(posicionCache).getEstado() == 'C') {
                             otherCache.getCache().get(posicionCache).setEstado('I');
-                            this.dataCache.getCache().get(posicionCache).setEstado('M');
+                            //this.dataCache.getCache().get(posicionCache).setEstado('M');
                             //MainMemory.getMainMemoryInstance().setDatosBloque(IR.get(1), this.dataCache.getCache().get(posicionCache).getPalabras());
-                            MainMemory.getMainMemoryInstance().getBlocksMemory().get(numeroBloque).setWords(otherCache.getCache().get(posicionCache).getPalabras());
-                            this.dataCache.dataCacheLock.release();
-                            //AVANZA EL CICLO DEL RELOJ!!!
+                            //MainMemory.getMainMemoryInstance().getBlocksMemory().get(numeroBloque).setWords(otherCache.getCache().get(posicionCache).getPalabras());
+                            //this.dataCache.dataCacheLock.release();
+                            otherCache.dataCacheLock.release();
                         }
+                        dataCache.getCache().get(posicionCache).setPalabra(numeroPalabra, registers.get(IR.get(2)));
+                        this.dataCache.dataCacheLock.release();
                         BusData.getBusDataInsance().lock.release();
                     }
                 } else if (dataCache.getCache().get(posicionCache).getEstado() == 'I') {
