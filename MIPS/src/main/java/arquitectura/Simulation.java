@@ -14,7 +14,7 @@ import java.util.Queue;
 import java.util.Random;
 
 /**
- * Simulation deals with the logic of our simulation. Here we initialize our processors, shared memories and the caches and run the simulation.
+ * Class that deals with the logic of our simulation. Here we initialize our processors, shared memories and the caches and run the simulation.
  */
 public class Simulation {
 
@@ -72,9 +72,7 @@ public class Simulation {
 
         while (!contextQueue.isEmpty() & contextQueue.size() >= 2) {
             asignHilillo(contextQueue);
-            //thread1.getHilillo().getContext().setRegisters(core0.getRegisters());
             this.thread1.run();
-            //thread2.getHilillo().getContext().setRegisters(core1.getRegisters());
             this.thread2.run();
 
         }
@@ -88,6 +86,7 @@ public class Simulation {
 
     }
 
+    //Assign hilillos to Core (Thread) randomly
     public void asignHilillo(Queue<Context> contextQueue) { //asignar hilillo a hilo de nucleo
         Random random = new Random();
         int hililloRandom = random.nextInt(this.hilillos.size());
@@ -114,6 +113,7 @@ public class Simulation {
         }
     }
 
+    //Print the shared memory
     public void printSharedMemory() {
         System.out.println("Shared memory:");
         for (int i = 0; i < MainMemory.getMainMemoryInstance().getsize(); i++) {
@@ -124,6 +124,7 @@ public class Simulation {
         }
     }
 
+    //Print Data Cache memory for both Cores
     public void printDataCache() {
         System.out.println("Core 0 Data Cache:");
         for (int i = 0; i < this.dataCache0.getCache().size(); i++) {
@@ -134,7 +135,6 @@ public class Simulation {
             for (int j = 0; j < this.dataCache0.getCache().get(i).getPalabras().size(); j++) {
                 System.out.print(this.dataCache0.getCache().get(i).getPalabras().get(j) + " ");
             }
-
         }
         System.out.println("\nCore 1 Data Cache:");
         for (int i = 0; i < this.dataCache1.getCache().size(); i++) {
