@@ -26,15 +26,15 @@ public class Util {
         this.instructionsMemory = new InstructionsMemory();
         this.archivos = new LinkedList<String>();
 
-        File file = new File("src/main/java/arquitectura/mips/util/1.txt");
+        File file = new File("../src/main/java/arquitectura/mips/util/1.txt");
         String file1 = file.getAbsolutePath();
-        file = new File("src/main/java/arquitectura/mips/util/2.txt");
+        file = new File("../src/main/java/arquitectura/mips/util/2.txt");
         String file2 = file.getAbsolutePath();
-        file = new File("src/main/java/arquitectura/mips/util/3.txt");
+        file = new File("../src/main/java/arquitectura/mips/util/3.txt");
         String file3 = file.getAbsolutePath();
-        file = new File("src/main/java/arquitectura/mips/util/4.txt");
+        file = new File("../src/main/java/arquitectura/mips/util/4.txt");
         String file4 = file.getAbsolutePath();
-        file = new File("src/main/java/arquitectura/mips/util/5.txt");
+        file = new File("../src/main/java/arquitectura/mips/util/5.txt");
         String file5 = file.getAbsolutePath();
 
         this.archivos.add(file1);
