@@ -194,6 +194,159 @@ public class Thread extends java.lang.Thread {
     }
 
 
+
+
+
+    //Perform SW operation
+    public void SW(){
+        int blockNumber = getNumeroDeBloque(IR.get(1), 4);
+        int word = getNumeroDePalabra(IR.get(1), 4, 4);
+        int cachePosition = getPosicionCache(blockNumber, this.dataCache.getSize());
+
+        if (this.dataCache.dataCacheLock.tryAcquire()) {
+            System.out.println("Acquired local cache with - " + this.hilillo.getName());
+            if (lookupCache(blockNumber, cachePosition)) { //found in my cache
+                if (this.dataCache.getCache().get(cachePosition).getEstado() == 'M') {
+                    int wordVal = this.registers.get(IR.get(2));
+                    this.dataCache.getCache().get(cachePosition).setPalabra(word, wordVal);
+                    System.out.println("Released local cache with - " + this.hilillo.getName());
+                    this.dataCache.dataCacheLock.release(); //suelto mi cache
+                    //termina el SW
+                } else if (this.dataCache.getCache().get(cachePosition).getEstado() == 'M') {
+                    if (BusData.getBusDataInsance().lock.tryAcquire()) { //intenta adquirir el bus
+                        if (this.dataCache.getRemoteCache().dataCacheLock.tryAcquire()) { //intento bloquear otra cache
+                            if ((lookupRemoteCache(blockNumber, cachePosition)) && (this.dataCache.getRemoteCache().getCache().get(cachePosition).getEstado() == 'C')) { //La encontre en la otra cache con estado "C"
+                                BlockCache blockCache = this.dataCache.getCache().get(cachePosition);
+                                BlockCache blockOtherCache = this.dataCache.getRemoteCache().getCache().get(cachePosition);
+
+                                blockCache.setEstado('M'); //cambia estado
+                                blockOtherCache.setEstado('I'); //cambia estado
+
+                                int wordVal = this.registers.get(IR.get(2));
+                                this.dataCache.getCache().get(cachePosition).setPalabra(word, wordVal);//hace el store
+                                System.out.println("Released local cache with - " + this.hilillo.getName());
+                                this.dataCache.dataCacheLock.release(); //suelto mi cache
+                            }
+                            this.dataCache.getRemoteCache().dataCacheLock.release(); //suelto otra cache
+                            BusData.getBusDataInsance().lock.release(); //suelto el bus
+                        }
+                        else { //No pudo bloquear otra cache
+                            this.PC--;
+                        }
+                    }
+                    else { //No pudo tomar el bus
+                        this.PC--;
+                    }
+                } else { //Estado "I"
+                    attemptStoreOnRemoteCache(blockNumber, word, cachePosition);
+                    System.out.println("Released local cache with - " + this.hilillo.getName());
+                    this.dataCache.dataCacheLock.release();
+                }
+            } //No encontro en mi cache
+            else {
+                attemptStoreOnRemoteCache(blockNumber, word, cachePosition);
+                System.out.println("Released local cache with - " + this.hilillo.getName());
+                this.dataCache.dataCacheLock.release();
+            }
+        } else {
+            this.PC--;
+        }
+    }
+
+
+    public void attemptStoreOnRemoteCache(int blockNumber, int word, int cachePosition) {
+        if (BusData.getBusDataInsance().lock.tryAcquire()) { //logre adquirir el bus
+            if (this.dataCache.getRemoteCache().dataCacheLock.tryAcquire()) { //bloqueo posicion en otra cache
+                if (lookupRemoteCache(blockNumber, cachePosition)) { //la encontre en la otra cache
+                    if (this.dataCache.getRemoteCache().getCache().get(cachePosition).getEstado() == 'I') {
+                        //traer de memoria
+                        for (int i = 0; i < 40; i++) {
+                            Clock.executeBarrier(); //dura 40 ciclos trayendo de memoria
+                        }
+                        BlockData blockData = lookupBlockInMemory(blockNumber);
+                        BlockCache blockCache = this.dataCache.getCache().get(cachePosition);
+                        //Si el bloque victima esta 'M' hay que guardarlo en memoria
+                        if (this.dataCache.getCache().get(cachePosition).getEstado() == 'M') {
+                            replaceBlockInMemory(blockCache); //cambio el bloque en memoria
+                        }
+                        blockCache.setPalabras(blockData.getWords()); //actualizar mi cache
+                        blockCache.setEstado('M'); //cambia estado
+                        int wordVal = this.registers.get(IR.get(2));//guarda en variable el valor a escribir
+                        this.dataCache.getCache().get(cachePosition).setPalabra(word, wordVal);//hace el store
+
+                    } else if (this.dataCache.getRemoteCache().getCache().get(cachePosition).getEstado() == 'C') {
+                        //traer de memoria
+                        for (int i = 0; i < 40; i++) {
+                            Clock.executeBarrier(); //dura 40 ciclos trayendo de memoria
+                        }
+                        BlockData blockData = lookupBlockInMemory(blockNumber);
+                        BlockCache blockCache = this.dataCache.getCache().get(cachePosition);
+                        BlockCache blockOtherCache = this.dataCache.getRemoteCache().getCache().get(cachePosition);
+                        //Si el bloque victima esta 'M' hay que guardarlo en memoria
+                        if (this.dataCache.getCache().get(cachePosition).getEstado() == 'M') {
+                            replaceBlockInMemory(blockCache); //cambio el bloque en memoria
+                        }
+                        blockCache.setPalabras(blockData.getWords()); //actualizar mi cache
+                        blockCache.setEstado('M'); //cambia estado
+                        blockOtherCache.setEstado('I'); //cambia estado
+
+                        int wordVal = this.registers.get(IR.get(2));//guarda en variable el valor a escribir
+                        this.dataCache.getCache().get(cachePosition).setPalabra(word, wordVal);//hace el store
+                        this.dataCache.getCache().get(cachePosition).setEstado('M');  //dejo el estado en M
+
+                    } else if (this.dataCache.getRemoteCache().getCache().get(cachePosition).getEstado() == 'M') {
+                        //traer de memoria
+                        for (int i = 0; i < 40; i++) {
+                            Clock.executeBarrier(); //dura 40 ciclos trayendo de memoria
+                        }
+                        BlockData blockData = lookupBlockInMemory(blockNumber);
+                        BlockCache blockCache = this.dataCache.getCache().get(cachePosition);
+                        BlockCache blockOtherCache = this.dataCache.getRemoteCache().getCache().get(cachePosition);
+                        //Si el bloque victima esta 'M' hay que guardarlo en memoria
+                        if (this.dataCache.getCache().get(cachePosition).getEstado() == 'M') {
+                            replaceBlockInMemory(blockCache); //cambio el bloque en memoria
+                        }
+                        blockOtherCache.setEstado('I');
+                        replaceBlockInMemory(blockOtherCache); //cambio el bloque en memoria
+                        blockCache.setPalabras(blockData.getWords()); //actualizar mi cache
+                        blockCache.setEstado('M'); //cambia estado
+
+                        int wordVal = this.registers.get(IR.get(2));//guarda en variable el valor a escribir
+                        this.dataCache.getCache().get(cachePosition).setPalabra(word, wordVal);//hace el store
+                    }
+                    this.dataCache.getRemoteCache().dataCacheLock.release();
+                } else {
+                    //traer de memoria
+                    for (int i = 0; i < 40; i++) {
+                        Clock.executeBarrier(); //dura 40 ciclos trayendo de memoria
+                    }
+                    BlockData blockData = lookupBlockInMemory(blockNumber);
+                    BlockCache blockCache = this.dataCache.getCache().get(cachePosition);
+                    if (this.dataCache.getCache().get(cachePosition).getEstado() == 'M') {
+                        replaceBlockInMemory(blockCache); //cambio el bloque en memoria
+                    }
+                    blockCache.setPalabras(blockData.getWords()); //actualizar mi cache
+                    blockCache.setEstado('M'); //cambia estado
+
+                    int wordVal = this.registers.get(IR.get(2));//guarda en variable el valor a escribir
+                    this.dataCache.getCache().get(cachePosition).setPalabra(word, wordVal);//hace el store
+                    this.dataCache.getRemoteCache().dataCacheLock.release();
+                }
+            } else {
+                this.PC--;
+            }
+            BusData.getBusDataInsance().lock.release(); //suelto el bus
+        } else {
+            this.PC--;
+        }
+    }
+
+
+
+
+
+
+
     public void executeInstruction(ArrayList<Integer> instruction) { //despues de cada instruccion se le quita quantum
         switch (instruction.get(0)) {
             case 8: //DADDI
