@@ -116,20 +116,34 @@ public class Thread extends java.lang.Thread {
                         }
                         BlockData blockData = lookupBlockInMemory(blockNumber);
                         BlockCache blockCache = this.dataCache.getCache().get(cachePosition);
+                        //Si el bloque victima esta 'M' hay que guardarlo en memoria
+                        if (this.dataCache.getCache().get(cachePosition).getEstado() == 'M') {
+                            replaceBlockInMemory(blockCache); //cambio el bloque en memoria
+                        }
                         blockCache.setPalabras(blockData.getWords()); //actualizar mi cache
                         blockCache.setEstado('M'); //cambia estado
                         int wordVal = blockCache.getPalabras().get(word);
                         this.registers.set(IR.get(2), wordVal);
                     } else if (this.dataCache.getRemoteCache().getCache().get(cachePosition).getEstado() == 'C') {
+                        BlockCache blockCache = this.dataCache.getCache().get(cachePosition);
+                        //Si el bloque victima esta 'M' hay que guardarlo en memoria
+                        if (this.dataCache.getCache().get(cachePosition).getEstado() == 'M') {
+                            replaceBlockInMemory(blockCache); //cambio el bloque en memoria
+                        }
                         int wordVal = this.dataCache.getRemoteCache().getCache().get(cachePosition).getPalabras().get(word);
                         this.dataCache.getCache().get(cachePosition).getPalabras().set(word, wordVal); //sobreescribo en mi cache
                         this.dataCache.getCache().get(cachePosition).setEstado('C');  //dejo el estado en C
                         this.registers.set(IR.get(2), wordVal);
                     } else if (this.dataCache.getRemoteCache().getCache().get(cachePosition).getEstado() == 'M') {
-                        BlockCache blockCache = this.dataCache.getRemoteCache().getCache().get(cachePosition);
-                        blockCache.setEstado('C');
-                        replaceBlockInMemory(blockCache); //cambio el bloque en memoria
-                        this.dataCache.getCache().set(cachePosition, blockCache); //reemplazo en mi cache
+                        BlockCache blockCache = this.dataCache.getCache().get(cachePosition);
+                        BlockCache blockOtherCache = this.dataCache.getRemoteCache().getCache().get(cachePosition);
+                        //Si el bloque victima esta 'M' hay que guardarlo en memoria
+                        if (this.dataCache.getCache().get(cachePosition).getEstado() == 'M') {
+                            replaceBlockInMemory(blockCache); //cambio el bloque en memoria
+                        }
+                        blockOtherCache.setEstado('C');
+                        replaceBlockInMemory(blockOtherCache); //cambio el bloque en memoria
+                        this.dataCache.getCache().set(cachePosition, blockOtherCache); //reemplazo en mi cache
                         this.dataCache.getCache().get(cachePosition).setEstado('C');
                         int wordVal = this.dataCache.getCache().get(cachePosition).getPalabras().get(word);
                         this.registers.set(IR.get(2), wordVal);
@@ -142,6 +156,10 @@ public class Thread extends java.lang.Thread {
                     }
                     BlockData blockData = lookupBlockInMemory(blockNumber);
                     BlockCache blockCache = this.dataCache.getCache().get(cachePosition);
+                    //Si el bloque victima esta 'M' hay que guardarlo en memoria
+                    if (this.dataCache.getCache().get(cachePosition).getEstado() == 'M') {
+                        replaceBlockInMemory(blockCache); //cambio el bloque en memoria
+                    }
                     blockCache.setPalabras(blockData.getWords()); //actualizar mi cache
                     blockCache.setEstado('M'); //cambia estado
                     int wordVal = blockCache.getPalabras().get(word);
