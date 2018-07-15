@@ -57,4 +57,8 @@ public class MainMemory {
         return this.datos;
     }
 
+    public void setBlock(int index, ArrayList<Integer> words) {
+        this.datos.get(index).setWords(words);
+    }
+
 }
