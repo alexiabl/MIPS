@@ -11,7 +11,7 @@ public class DataCache {
 
     private ArrayList<BlockCache> cache;
     private int size;
-    public Semaphore dataCacheLock;
+    public Semaphore dataCacheLock = new Semaphore(1);
     private DataCache remoteCache;
 
     //Our data cache is initalized with Blocks set to 1s and Invalid state
@@ -24,7 +24,6 @@ public class DataCache {
             bloque.setEstado('I');
             this.cache.add(bloque);
         }
-        this.dataCacheLock = new Semaphore(1);
     }
 
 
