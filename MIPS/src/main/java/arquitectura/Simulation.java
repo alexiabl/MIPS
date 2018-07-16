@@ -59,6 +59,8 @@ public class Simulation {
         this.hilillos = util.getHilillos();
 
         Queue<Context> contextQueue = util.getContextQueue();
+        System.out.println("Memoria antes de simulacion");
+        this.printSharedMemory();
 
         this.thread1 = new Thread();
         this.thread2 = new Thread();

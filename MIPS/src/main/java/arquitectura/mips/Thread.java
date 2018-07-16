@@ -8,10 +8,7 @@ import arquitectura.mips.cache.DataCache;
 import arquitectura.mips.cache.InstructionCache;
 import arquitectura.mips.memory.InstructionsMemory;
 import arquitectura.mips.memory.MainMemory;
-import sun.applet.Main;
-
 import java.util.ArrayList;
-import java.util.Collections;
 
 /**
  * This class can be thought of as the Core that will execute instructions. The Core class executes the assigned Thread.
@@ -25,6 +22,7 @@ public class Thread extends java.lang.Thread {
     private DataCache dataCache;
     private InstructionCache instructionCache;
     private int cycles;
+    private MainMemory copyMemory = MainMemory.getMainMemoryInstance();
 
     public Thread(DataCache dataCache, InstructionCache instructionCache) {
         this.dataCache = dataCache;
@@ -171,6 +169,8 @@ public class Thread extends java.lang.Thread {
             }
             BusData.getBusDataInsance().lock.release(); //suelto el bus
         } else {
+            //revisar si es bloque victima
+
             this.PC--;
         }
     }
@@ -179,6 +179,7 @@ public class Thread extends java.lang.Thread {
         for (BlockData block : MainMemory.getMainMemoryInstance().getBlocksMemory()) {
             if (block.getNumBloque() == blockCache.getEtiqueta()) {
                 MainMemory.getMainMemoryInstance().setBlock(block.getNumBloque(), blockCache.getPalabras());
+                break;
             }
         }
     }
@@ -188,6 +189,7 @@ public class Thread extends java.lang.Thread {
         for (BlockData block : MainMemory.getMainMemoryInstance().getBlocksMemory()) {
             if (block.getNumBloque() == blockNumber) {
                 blockData = block;
+                break;
             }
         }
         return blockData;
@@ -212,38 +214,38 @@ public class Thread extends java.lang.Thread {
     }
 
 
-
-
-
     //Perform SW operation
     public void SW(){
-        int blockNumber = getNumeroDeBloque(IR.get(1), 4);
+        int blockNumber = getNumeroDeBloque(IR.get(1) + IR.get(3), 4);
         int word = getNumeroDePalabra(IR.get(1), 4, 4);
         int cachePosition = getPosicionCache(blockNumber, this.dataCache.getSize());
 
         if (this.dataCache.dataCacheLock.tryAcquire()) {
-            System.out.println("Acquired local cache with - " + this.hilillo.getName());
+            System.out.println("Store Acquired local cache with - " + this.hilillo.getName());
             if (lookupCache(blockNumber, cachePosition)) { //found in my cache
                 if (this.dataCache.getCache().get(cachePosition).getEstado() == 'M') {
                     int wordVal = this.registers.get(IR.get(2));
                     this.dataCache.getCache().get(cachePosition).setPalabra(word, wordVal);
-                    System.out.println("Released local cache with - " + this.hilillo.getName());
+                    System.out.println("Store Released local cache with - " + this.hilillo.getName());
                     this.dataCache.dataCacheLock.release(); //suelto mi cache
                     //termina el SW
-                } else if (this.dataCache.getCache().get(cachePosition).getEstado() == 'M') {
+                } else if (this.dataCache.getCache().get(cachePosition).getEstado() == 'C') {
                     if (BusData.getBusDataInsance().lock.tryAcquire()) { //intenta adquirir el bus
                         if (this.dataCache.getRemoteCache().dataCacheLock.tryAcquire()) { //intento bloquear otra cache
-                            if ((lookupRemoteCache(blockNumber, cachePosition)) && (this.dataCache.getRemoteCache().getCache().get(cachePosition).getEstado() == 'C')) { //La encontre en la otra cache con estado "C"
-                                BlockCache blockCache = this.dataCache.getCache().get(cachePosition);
-                                BlockCache blockOtherCache = this.dataCache.getRemoteCache().getCache().get(cachePosition);
+                            if ((lookupRemoteCache(blockNumber, cachePosition))) { //La encontre en la otra cache con estado "C"
+                                if (this.dataCache.getRemoteCache().getCache().get(cachePosition).getEstado() == 'C') {
+                                    BlockCache blockCache = this.dataCache.getCache().get(cachePosition);
+                                    BlockCache blockOtherCache = this.dataCache.getRemoteCache().getCache().get(cachePosition);
 
-                                blockCache.setEstado('M'); //cambia estado
-                                blockOtherCache.setEstado('I'); //cambia estado
+                                    blockCache.setEstado('M'); //cambia estado
+                                    blockOtherCache.setEstado('I'); //cambia estado
 
-                                int wordVal = this.registers.get(IR.get(2));
-                                this.dataCache.getCache().get(cachePosition).setPalabra(word, wordVal);//hace el store
-                                System.out.println("Released local cache with - " + this.hilillo.getName());
-                                this.dataCache.dataCacheLock.release(); //suelto mi cache
+                                    int wordVal = this.registers.get(IR.get(2));
+                                    this.dataCache.getCache().get(cachePosition).setPalabra(word, wordVal);//hace el store
+                                    this.dataCache.getCache().get(cachePosition).setEtiqueta(blockNumber);
+                                    System.out.println("Store Released local cache with - " + this.hilillo.getName());
+                                    this.dataCache.dataCacheLock.release(); //suelto mi cache
+                                }
                             }
                             this.dataCache.getRemoteCache().dataCacheLock.release(); //suelto otra cache
                             BusData.getBusDataInsance().lock.release(); //suelto el bus
@@ -257,13 +259,13 @@ public class Thread extends java.lang.Thread {
                     }
                 } else { //Estado "I"
                     attemptStoreOnRemoteCache(blockNumber, word, cachePosition);
-                    System.out.println("Released local cache with - " + this.hilillo.getName());
+                    System.out.println("Store Released local cache with - " + this.hilillo.getName());
                     this.dataCache.dataCacheLock.release();
                 }
             } //No encontro en mi cache
             else {
                 attemptStoreOnRemoteCache(blockNumber, word, cachePosition);
-                System.out.println("Released local cache with - " + this.hilillo.getName());
+                System.out.println("Store Released local cache with - " + this.hilillo.getName());
                 this.dataCache.dataCacheLock.release();
             }
         } else {
@@ -291,6 +293,7 @@ public class Thread extends java.lang.Thread {
                         blockCache.setEstado('M'); //cambia estado
                         int wordVal = this.registers.get(IR.get(2));//guarda en variable el valor a escribir
                         this.dataCache.getCache().get(cachePosition).setPalabra(word, wordVal);//hace el store
+                        this.dataCache.getCache().get(cachePosition).setEtiqueta(blockData.getNumBloque());
 
                     } else if (this.dataCache.getRemoteCache().getCache().get(cachePosition).getEstado() == 'C') {
                         //traer de memoria
@@ -307,6 +310,9 @@ public class Thread extends java.lang.Thread {
                         blockCache.setPalabras(blockData.getWords()); //actualizar mi cache
                         blockCache.setEstado('M'); //cambia estado
                         blockOtherCache.setEstado('I'); //cambia estado
+                        blockCache.setEtiqueta(blockData.getNumBloque());
+                        blockOtherCache.setEtiqueta(blockData.getNumBloque());
+
 
                         int wordVal = this.registers.get(IR.get(2));//guarda en variable el valor a escribir
                         this.dataCache.getCache().get(cachePosition).setPalabra(word, wordVal);//hace el store
@@ -325,9 +331,11 @@ public class Thread extends java.lang.Thread {
                             replaceBlockInMemory(blockCache); //cambio el bloque en memoria
                         }
                         blockOtherCache.setEstado('I');
+                        blockOtherCache.setEtiqueta(blockData.getNumBloque());
                         replaceBlockInMemory(blockOtherCache); //cambio el bloque en memoria
                         blockCache.setPalabras(blockData.getWords()); //actualizar mi cache
                         blockCache.setEstado('M'); //cambia estado
+                        blockCache.setEtiqueta(blockData.getNumBloque());
 
                         int wordVal = this.registers.get(IR.get(2));//guarda en variable el valor a escribir
                         this.dataCache.getCache().get(cachePosition).setPalabra(word, wordVal);//hace el store
@@ -345,9 +353,11 @@ public class Thread extends java.lang.Thread {
                     }
                     blockCache.setPalabras(blockData.getWords()); //actualizar mi cache
                     blockCache.setEstado('M'); //cambia estado
+                    blockCache.setEtiqueta(blockData.getNumBloque());
 
                     int wordVal = this.registers.get(IR.get(2));//guarda en variable el valor a escribir
-                    this.dataCache.getCache().get(cachePosition).setPalabra(word, wordVal);//hace el store
+                    blockCache.setPalabra(word, wordVal);
+                    //this.dataCache.getCache().get(cachePosition).setPalabra(word, wordVal);//hace el store
                     this.dataCache.getRemoteCache().dataCacheLock.release();
                 }
             } else {
@@ -358,10 +368,6 @@ public class Thread extends java.lang.Thread {
             this.PC--;
         }
     }
-
-
-
-
 
 
 
@@ -408,7 +414,7 @@ public class Thread extends java.lang.Thread {
                 this.hilillo.removeQuantum();
                 break;
             case 43:
-                //SW();
+                SW();
                 this.hilillo.removeQuantum();
                 break;
             case 63:
