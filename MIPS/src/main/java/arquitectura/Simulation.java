@@ -77,12 +77,12 @@ public class Simulation {
             this.thread1.run();
             this.thread2.run();
 
-        }
+        }/*
         if (contextQueue.size() < 2) {
             this.hilillos.get(0).setContext(contextQueue.poll());
             this.thread1.setHilillo(this.hilillos.get(0));
             this.thread1.run();
-        }
+        }*/
         printSharedMemory();
         printDataCache();
 
@@ -100,18 +100,15 @@ public class Simulation {
 
         if (!contextQueue.isEmpty() && !this.hilillos.isEmpty()) {
             Hilillo hilillo1 = this.hilillos.get(hililloRandom);
-            Context context = contextQueue.poll();
-            hilillo1.setContext(context);
+            contextQueue.poll();
             this.thread1.setHilillo(hilillo1);
 
             Hilillo hilillo2 = this.hilillos.get(hililloRandom2);
-            Context context2 = contextQueue.poll();
-            hilillo2.setContext(context2);
+            contextQueue.poll();
             this.thread2.setHilillo(hilillo2);
 
             this.hilillos.remove(hilillo2);
             this.hilillos.remove(hilillo1);
-
         }
     }
 

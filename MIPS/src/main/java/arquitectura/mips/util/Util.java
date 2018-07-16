@@ -26,6 +26,8 @@ public class Util {
         this.instructionsMemory = new InstructionsMemory();
         this.archivos = new LinkedList<String>();
 //"../src/main/java/arquitectura/mips/util/3.txt"
+        File file00 = new File("/Users/alexiaborchgrevink/Desktop/Arquitectura/Proyecto-MIPS/MIPS/MIPS/src/main/java/arquitectura/mips/util/0.txt");
+        String file0 = file00.getAbsolutePath();
         File file = new File("/Users/alexiaborchgrevink/Desktop/Arquitectura/Proyecto-MIPS/MIPS/MIPS/src/main/java/arquitectura/mips/util/1.txt");
         String file1 = file.getAbsolutePath();
         file = new File("/Users/alexiaborchgrevink/Desktop/Arquitectura/Proyecto-MIPS/MIPS/MIPS/src/main/java/arquitectura/mips/util/2.txt");
@@ -36,7 +38,7 @@ public class Util {
         String file4 = file.getAbsolutePath();
         file = new File("/Users/alexiaborchgrevink/Desktop/Arquitectura/Proyecto-MIPS/MIPS/MIPS/src/main/java/arquitectura/mips/util/5.txt");
         String file5 = file.getAbsolutePath();
-
+        this.archivos.add(file0);
         this.archivos.add(file1);
         this.archivos.add(file2);
         this.archivos.add(file3);
@@ -61,12 +63,8 @@ public class Util {
                 StringBuffer stringBuffer = new StringBuffer();
                 String line;
                 int cont = blockCounter;
-                Context context = null;
-                if (currentPosition == 0) {
-                    context = new Context(currentPosition);
-                } else {
-                    context = new Context(currentPosition + 1);
-                }
+
+                Context context = new Context(currentPosition);
                 while ((line = bufferedReader.readLine()) != null) {
                     stringBuffer.append(line);
                     String[] split = line.split(" ");
@@ -87,6 +85,7 @@ public class Util {
                 context.setPCfinal(currentPosition);
                 this.addToContextQueue(context);
                 Hilillo hilillo = new Hilillo(40, "Hilillo-" + i);
+                hilillo.setContext(context);
                 this.hilillos.add(hilillo);
                 fileReader.close();
             } catch (IOException e) {

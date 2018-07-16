@@ -18,12 +18,12 @@ public class MainMemory {
     public MainMemory(int size) {
         this.datos = new ArrayList<BlockData>();
         this.size = size;
-        ArrayList<Integer> words = new ArrayList<Integer>();
-        for (int j = 0; j < 4; j++) {
-            words.add(1);
-        }
         //We initialize our shared memory with 1's
         for (int i = 0; i < this.size; i++) {
+            ArrayList<Integer> words = new ArrayList<Integer>();
+            for (int j = 0; j < 4; j++) {
+                words.add(1);
+            }
             BlockData bloque = new BlockData();
             bloque.setNumBloque(i);
             bloque.setWords(words);
@@ -60,6 +60,7 @@ public class MainMemory {
     public void setBlock(int index, ArrayList<Integer> words) {
         BlockData block = new BlockData();
         block.setWords(words);
+        block.setNumBloque(index);
         this.datos.set(index, block);
     }
 

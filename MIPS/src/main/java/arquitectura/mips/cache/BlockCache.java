@@ -13,6 +13,9 @@ public class BlockCache {
 
     public BlockCache() {
         this.palabras = new ArrayList<Integer>();
+        for (int i = 0; i < 4; i++) {
+            this.palabras.add(0);
+        }
 
     }
 

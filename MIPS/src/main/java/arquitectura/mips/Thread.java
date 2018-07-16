@@ -1,6 +1,5 @@
 package arquitectura.mips;
 
-import arquitectura.mips.block.Block;
 import arquitectura.mips.block.BlockData;
 import arquitectura.mips.block.BlockInstructions;
 import arquitectura.mips.cache.BlockCache;
@@ -55,12 +54,13 @@ public class Thread extends java.lang.Thread {
 
     //Calculate the Block number
     int getNumeroDeBloque(int posicion, int tamBloqueMemoria) {
-        return posicion / tamBloqueMemoria;
+        int res = posicion / tamBloqueMemoria;
+        return (int) Math.floor(res / tamBloqueMemoria);
     }
 
     //Calculate the word number
     int getNumeroDePalabra(int posicion, int tamBloqueMemoria, int bytesPalabra) {
-        return (posicion % tamBloqueMemoria) / bytesPalabra;
+        return (posicion / tamBloqueMemoria) % bytesPalabra;
     }
 
     //Calculate Position in Cache
@@ -71,28 +71,24 @@ public class Thread extends java.lang.Thread {
 
     //Perform LW operation
     public void LW(){
-        int blockNumber = getNumeroDeBloque(IR.get(1), 4);
-        int word = getNumeroDePalabra(IR.get(1), 4, 4);
+        int blockNumber = getNumeroDeBloque(this.registers.get(IR.get(1)) + IR.get(3), 4);
+        int word = getNumeroDePalabra(this.registers.get(IR.get(1)) + IR.get(3), 4, 4);
         int cachePosition = getPosicionCache(blockNumber, this.dataCache.getSize());
 
         if (this.dataCache.dataCacheLock.tryAcquire()) {
-            System.out.println("Acquired local cache with - " + this.hilillo.getName());
             if (lookupCache(blockNumber, cachePosition)) { //found in my cache
                 if (this.dataCache.getCache().get(cachePosition).getEstado() == 'C' || this.dataCache.getCache().get(cachePosition).getEstado() == 'M') {
                     int wordVal = this.dataCache.getCache().get(cachePosition).getPalabras().get(word);
                     this.registers.set(IR.get(2), wordVal);
-                    System.out.println("Released local cache with - " + this.hilillo.getName());
                     this.dataCache.dataCacheLock.release(); //suelto mi cache
                     //termina el LW
                 } else { //Estado = 'I'
                     attemptLoadOnRemoteCache(blockNumber, word, cachePosition);
-                    System.out.println("Released local cache with - " + this.hilillo.getName());
                     this.dataCache.dataCacheLock.release();
                 }
             } //no encontro en mi cache
             else {
                 attemptLoadOnRemoteCache(blockNumber, word, cachePosition);
-                System.out.println("Released local cache with - " + this.hilillo.getName());
                 this.dataCache.dataCacheLock.release();
             }
         } else {
@@ -119,30 +115,42 @@ public class Thread extends java.lang.Thread {
                             replaceBlockInMemory(blockCache); //cambio el bloque en memoria
                         }
                         blockCache.setPalabras(blockData.getWords()); //actualizar mi cache
-                        blockCache.setEstado('M'); //cambia estado
+                        blockCache.setEstado('C'); //cambia estado
+                        blockCache.setEtiqueta(blockData.getNumBloque());
                         int wordVal = blockCache.getPalabras().get(word);
                         this.registers.set(IR.get(2), wordVal);
                     } else if (this.dataCache.getRemoteCache().getCache().get(cachePosition).getEstado() == 'C') {
                         BlockCache blockCache = this.dataCache.getCache().get(cachePosition);
+                        BlockCache otherBlockCache = this.dataCache.getRemoteCache().getCache().get(cachePosition);
                         //Si el bloque victima esta 'M' hay que guardarlo en memoria
                         if (this.dataCache.getCache().get(cachePosition).getEstado() == 'M') {
+                            //traer de memoria
+                            for (int i = 0; i < 40; i++) {
+                                Clock.executeBarrier(); //dura 40 ciclos trayendo de memoria
+                            }
                             replaceBlockInMemory(blockCache); //cambio el bloque en memoria
                         }
-                        int wordVal = this.dataCache.getRemoteCache().getCache().get(cachePosition).getPalabras().get(word);
-                        this.dataCache.getCache().get(cachePosition).getPalabras().set(word, wordVal); //sobreescribo en mi cache
+                        int wordVal = otherBlockCache.getPalabras().get(word);
+                        blockCache.setPalabras(otherBlockCache.getPalabras()); //sobreescribo en mi cache
                         this.dataCache.getCache().get(cachePosition).setEstado('C');  //dejo el estado en C
+                        blockCache.setEtiqueta(otherBlockCache.getEtiqueta());
                         this.registers.set(IR.get(2), wordVal);
                     } else if (this.dataCache.getRemoteCache().getCache().get(cachePosition).getEstado() == 'M') {
                         BlockCache blockCache = this.dataCache.getCache().get(cachePosition);
                         BlockCache blockOtherCache = this.dataCache.getRemoteCache().getCache().get(cachePosition);
                         //Si el bloque victima esta 'M' hay que guardarlo en memoria
                         if (this.dataCache.getCache().get(cachePosition).getEstado() == 'M') {
+                            //traer de memoria
+                            for (int i = 0; i < 40; i++) {
+                                Clock.executeBarrier(); //dura 40 ciclos trayendo de memoria
+                            }
                             replaceBlockInMemory(blockCache); //cambio el bloque en memoria
                         }
                         blockOtherCache.setEstado('C');
                         replaceBlockInMemory(blockOtherCache); //cambio el bloque en memoria
-                        this.dataCache.getCache().set(cachePosition, blockOtherCache); //reemplazo en mi cache
+                        blockCache.setPalabras(blockOtherCache.getPalabras());
                         this.dataCache.getCache().get(cachePosition).setEstado('C');
+                        blockCache.setEtiqueta(blockOtherCache.getEtiqueta());
                         int wordVal = this.dataCache.getCache().get(cachePosition).getPalabras().get(word);
                         this.registers.set(IR.get(2), wordVal);
                     }
@@ -159,7 +167,8 @@ public class Thread extends java.lang.Thread {
                         replaceBlockInMemory(blockCache); //cambio el bloque en memoria
                     }
                     blockCache.setPalabras(blockData.getWords()); //actualizar mi cache
-                    blockCache.setEstado('M'); //cambia estado
+                    blockCache.setEstado('C'); //cambia estado
+                    blockCache.setEtiqueta(blockData.getNumBloque());
                     int wordVal = blockCache.getPalabras().get(word);
                     this.registers.set(IR.get(2), wordVal);
                     this.dataCache.getRemoteCache().dataCacheLock.release();
@@ -169,8 +178,6 @@ public class Thread extends java.lang.Thread {
             }
             BusData.getBusDataInsance().lock.release(); //suelto el bus
         } else {
-            //revisar si es bloque victima
-
             this.PC--;
         }
     }
@@ -216,23 +223,25 @@ public class Thread extends java.lang.Thread {
 
     //Perform SW operation
     public void SW(){
-        int blockNumber = getNumeroDeBloque(IR.get(1) + IR.get(3), 4);
-        int word = getNumeroDePalabra(IR.get(1), 4, 4);
+        int blockNumber = getNumeroDeBloque(this.registers.get(IR.get(1)) + IR.get(3), 4);
+        int word = getNumeroDePalabra(this.registers.get(IR.get(1)) + IR.get(3), 4, 4);
         int cachePosition = getPosicionCache(blockNumber, this.dataCache.getSize());
 
         if (this.dataCache.dataCacheLock.tryAcquire()) {
-            System.out.println("Store Acquired local cache with - " + this.hilillo.getName());
             if (lookupCache(blockNumber, cachePosition)) { //found in my cache
                 if (this.dataCache.getCache().get(cachePosition).getEstado() == 'M') {
                     int wordVal = this.registers.get(IR.get(2));
                     this.dataCache.getCache().get(cachePosition).setPalabra(word, wordVal);
-                    System.out.println("Store Released local cache with - " + this.hilillo.getName());
                     this.dataCache.dataCacheLock.release(); //suelto mi cache
                     //termina el SW
                 } else if (this.dataCache.getCache().get(cachePosition).getEstado() == 'C') {
                     if (BusData.getBusDataInsance().lock.tryAcquire()) { //intenta adquirir el bus
                         if (this.dataCache.getRemoteCache().dataCacheLock.tryAcquire()) { //intento bloquear otra cache
+
+
                             if ((lookupRemoteCache(blockNumber, cachePosition))) { //La encontre en la otra cache con estado "C"
+
+
                                 if (this.dataCache.getRemoteCache().getCache().get(cachePosition).getEstado() == 'C') {
                                     BlockCache blockCache = this.dataCache.getCache().get(cachePosition);
                                     BlockCache blockOtherCache = this.dataCache.getRemoteCache().getCache().get(cachePosition);
@@ -243,29 +252,43 @@ public class Thread extends java.lang.Thread {
                                     int wordVal = this.registers.get(IR.get(2));
                                     this.dataCache.getCache().get(cachePosition).setPalabra(word, wordVal);//hace el store
                                     this.dataCache.getCache().get(cachePosition).setEtiqueta(blockNumber);
-                                    System.out.println("Store Released local cache with - " + this.hilillo.getName());
                                     this.dataCache.dataCacheLock.release(); //suelto mi cache
+                                } else {
+                                    int wordVal = this.registers.get(IR.get(2));
+                                    this.dataCache.getCache().get(cachePosition).setPalabra(word, wordVal);
+                                    this.dataCache.getCache().get(cachePosition).setEstado('M');
+                                    this.dataCache.dataCacheLock.release();
+                                    BusData.getBusDataInsance().lock.release(); //suelto el bus
                                 }
+
+
+                            } else {
+
+                                int wordVal = this.registers.get(IR.get(2));
+                                this.dataCache.getCache().get(cachePosition).setPalabra(word, wordVal);
+                                this.dataCache.getCache().get(cachePosition).setEstado('M');
+                                this.dataCache.dataCacheLock.release();
+                                BusData.getBusDataInsance().lock.release(); //suelto el bus
+
                             }
                             this.dataCache.getRemoteCache().dataCacheLock.release(); //suelto otra cache
                             BusData.getBusDataInsance().lock.release(); //suelto el bus
-                        }
-                        else { //No pudo bloquear otra cache
+                        } else { //No pudo bloquear otra cache
+                            BusData.getBusDataInsance().lock.release(); //suelto el bus
+                            this.dataCache.dataCacheLock.release();
                             this.PC--;
                         }
-                    }
-                    else { //No pudo tomar el bus
+                    } else { //No pudo tomar el bus
+                        this.dataCache.dataCacheLock.release();
                         this.PC--;
                     }
                 } else { //Estado "I"
                     attemptStoreOnRemoteCache(blockNumber, word, cachePosition);
-                    System.out.println("Store Released local cache with - " + this.hilillo.getName());
                     this.dataCache.dataCacheLock.release();
                 }
             } //No encontro en mi cache
             else {
                 attemptStoreOnRemoteCache(blockNumber, word, cachePosition);
-                System.out.println("Store Released local cache with - " + this.hilillo.getName());
                 this.dataCache.dataCacheLock.release();
             }
         } else {
@@ -291,27 +314,26 @@ public class Thread extends java.lang.Thread {
                         }
                         blockCache.setPalabras(blockData.getWords()); //actualizar mi cache
                         blockCache.setEstado('M'); //cambia estado
+                        blockCache.setEtiqueta(blockData.getNumBloque());
                         int wordVal = this.registers.get(IR.get(2));//guarda en variable el valor a escribir
                         this.dataCache.getCache().get(cachePosition).setPalabra(word, wordVal);//hace el store
                         this.dataCache.getCache().get(cachePosition).setEtiqueta(blockData.getNumBloque());
 
                     } else if (this.dataCache.getRemoteCache().getCache().get(cachePosition).getEstado() == 'C') {
-                        //traer de memoria
-                        for (int i = 0; i < 40; i++) {
-                            Clock.executeBarrier(); //dura 40 ciclos trayendo de memoria
-                        }
-                        BlockData blockData = lookupBlockInMemory(blockNumber);
                         BlockCache blockCache = this.dataCache.getCache().get(cachePosition);
                         BlockCache blockOtherCache = this.dataCache.getRemoteCache().getCache().get(cachePosition);
                         //Si el bloque victima esta 'M' hay que guardarlo en memoria
                         if (this.dataCache.getCache().get(cachePosition).getEstado() == 'M') {
+                            //traer de memoria
+                            for (int i = 0; i < 40; i++) {
+                                Clock.executeBarrier(); //dura 40 ciclos trayendo de memoria
+                            }
                             replaceBlockInMemory(blockCache); //cambio el bloque en memoria
                         }
-                        blockCache.setPalabras(blockData.getWords()); //actualizar mi cache
+                        blockCache.setPalabras(blockOtherCache.getPalabras()); //actualizar mi cache
                         blockCache.setEstado('M'); //cambia estado
                         blockOtherCache.setEstado('I'); //cambia estado
-                        blockCache.setEtiqueta(blockData.getNumBloque());
-                        blockOtherCache.setEtiqueta(blockData.getNumBloque());
+                        blockCache.setEtiqueta(blockOtherCache.getEtiqueta());
 
 
                         int wordVal = this.registers.get(IR.get(2));//guarda en variable el valor a escribir
@@ -323,7 +345,7 @@ public class Thread extends java.lang.Thread {
                         for (int i = 0; i < 40; i++) {
                             Clock.executeBarrier(); //dura 40 ciclos trayendo de memoria
                         }
-                        BlockData blockData = lookupBlockInMemory(blockNumber);
+
                         BlockCache blockCache = this.dataCache.getCache().get(cachePosition);
                         BlockCache blockOtherCache = this.dataCache.getRemoteCache().getCache().get(cachePosition);
                         //Si el bloque victima esta 'M' hay que guardarlo en memoria
@@ -331,11 +353,10 @@ public class Thread extends java.lang.Thread {
                             replaceBlockInMemory(blockCache); //cambio el bloque en memoria
                         }
                         blockOtherCache.setEstado('I');
-                        blockOtherCache.setEtiqueta(blockData.getNumBloque());
                         replaceBlockInMemory(blockOtherCache); //cambio el bloque en memoria
-                        blockCache.setPalabras(blockData.getWords()); //actualizar mi cache
+                        blockCache.setPalabras(blockOtherCache.getPalabras()); //actualizar mi cache
                         blockCache.setEstado('M'); //cambia estado
-                        blockCache.setEtiqueta(blockData.getNumBloque());
+                        blockCache.setEtiqueta(blockOtherCache.getEtiqueta());
 
                         int wordVal = this.registers.get(IR.get(2));//guarda en variable el valor a escribir
                         this.dataCache.getCache().get(cachePosition).setPalabra(word, wordVal);//hace el store
@@ -427,42 +448,32 @@ public class Thread extends java.lang.Thread {
 
     public void DADDI() {
         int resultado = this.registers.get(IR.get(1)) + IR.get(3);
-        System.out.println(this.hilillo.getName() + "-" + " resultado=" + resultado);
         this.registers.set(IR.get(2), resultado);
-        System.out.println("Registro[" + IR.get(2) + "]:" + this.registers.get(IR.get(2)));
         Clock.executeBarrier();
     }
 
     public void DADD() {
         int resultado = this.registers.get(IR.get(1)) + this.registers.get(IR.get(2));
-        System.out.println(this.hilillo.getName() + "-" + " resultado=" + resultado);
         this.registers.set(IR.get(3), resultado);
-        System.out.println("Registro[" + IR.get(3) + "]" + this.registers.get(IR.get(3)));
         Clock.executeBarrier();
     }
 
     public void DSUB() {
         int resultado = registers.get(IR.get(1)) - registers.get(IR.get(2));
-        System.out.println(this.hilillo.getName() + "-" + " resultado=" + resultado);
         registers.set(IR.get(3), resultado);
-        System.out.println("Registro:" + IR.get(3) + "=" + this.registers.get(IR.get(3)));
         Clock.executeBarrier();
     }
 
     public void DMUL() {
         int resultado = registers.get(IR.get(1)) * registers.get(IR.get(2));
-        System.out.println(this.hilillo.getName() + "-" + " resultado=" + resultado);
         registers.set(IR.get(3), resultado);
-        System.out.println("Registro:" + IR.get(3) + "=" + this.registers.get(IR.get(3)));
         Clock.executeBarrier();
     }
 
     public void DDIV() {
         if (registers.get(IR.get(2)) != 0) {
             int resultado = registers.get(IR.get(1)) / registers.get(IR.get(2));
-            System.out.println(this.hilillo.getName() + "-" + " resultado=" + resultado);
             registers.set(IR.get(3), resultado);
-            System.out.println("Registro:" + IR.get(3) + "=" + this.registers.get(IR.get(3)));
         } else {
             System.out.println("Advertencia! Está dividiendo entre 0.");
         }
@@ -486,7 +497,7 @@ public class Thread extends java.lang.Thread {
 
     public void JAL() {
         registers.set(31, PC);
-        this.PC = PC + IR.get(3);
+        this.PC = PC + (IR.get(3) / 4);
         Clock.executeBarrier();
     }
 
@@ -497,7 +508,7 @@ public class Thread extends java.lang.Thread {
 
     public void FIN() {
         System.out.println("Thread finished");
-        printRegisters();
+        this.PC = this.hilillo.getContext().getPCfinal();
     }
 
     //Thread method that executes the instructions
@@ -514,7 +525,6 @@ public class Thread extends java.lang.Thread {
         System.out.println(this.getName() + " finalized");
         printRegisters();
         Clock.reduceCoreCount();
-        Clock.executeBarrier();
         System.out.println("Cycles = " + Clock.getCycle());
     }
 
